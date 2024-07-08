@@ -1,34 +1,40 @@
 #ifndef RENDERABLE_OBJECT_H
 #define RENDERABLE_OBJECT_H
 
-#include <vector>
+#include "Shape.h"
 
 class RenderableObject
 {
     public:
-        std::vector<float> pos;
+        //center of obj
+        vector3f pos;
 
-        std::vector<float> vel;
-        std::vector<float> accel;
+        vector3f vel;
+        vector3f accel;
 
-        std::vector<float> angularVel;
-        std::vector<float> angularAccel;
+        vector3f angularVel;
+        vector3f angularAccel;
 
         float mass;
 
-        RenderableObject() : pos(2), vel(2), accel(2), angularVel(2), angularAccel(2), mass(0)
+        Shape shape;
+
+        RenderableObject() : pos(), shape(), vel(), accel(), angularVel(), angularAccel(), mass(0)
+        {};
+
+        RenderableObject(vector3f& pos) : pos(pos), shape(), vel(), accel(), angularVel(), angularAccel(), mass(0)
+        {};
+
+        RenderableObject(vector3f& pos, float mass) : pos(pos), shape(), vel(), accel(), angularVel(), angularAccel(), mass(1/mass)
+        {};
+
+        RenderableObject(vector3f& pos, float mass, Shape& shape) : pos(pos), shape(shape), vel(), accel(), angularVel(), angularAccel(), mass(1/mass)
         {};
 
         ~RenderableObject()
         {};
 
-        void ApplyForce(const std::vector<float>& force)
-        {
-            //x
-            accel[0] += force[0] / mass;
-            //y
-            accel[1] += force[1] / mass;
-        }
+        void UpdateVertices();
 };
 
 #endif
