@@ -17,9 +17,8 @@
 class PhysicsEngine
 {
     private:
-        const float C_gravityCoe = -9.8;
-
-        std::vector<RenderableObject&> objects;
+        const vector3f C_gravitycoeff;
+        std::vector<RenderableObject> objects;
 
         void GenerateForce(const float deltaTime);
         void RigidbodyUpdate(const float deltaTime);
@@ -28,27 +27,14 @@ class PhysicsEngine
 
     public:
         //Constructor
-        PhysicsEngine() : objects(0)
+        PhysicsEngine() : C_gravitycoeff(0.0f, -2.8f, 0.0f), objects(0)
         {};
         
         //Deconstructor
-        ~PhysicsEngine();
+        ~PhysicsEngine()
+        {};
 
         void Update(const float deltaTime);
         void AddObject(const RenderableObject& object);
 };
-
-void PhysicsEngine::GenerateForce(const float deltaTime)
-{
-    for(const auto& obj : objects)
-    {
-
-    }
-}
-
-void PhysicsEngine::RigidbodyUpdate(const float deltaTime)
-{
-
-}
-
 #endif
