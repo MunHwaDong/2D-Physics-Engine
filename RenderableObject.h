@@ -15,20 +15,21 @@ class RenderableObject
         vector3f angularVel;
         vector3f angularAccel;
 
-        float mass;
+        //Store inverse of mass
+        float inverseMass;
 
         Shape shape;
 
-        RenderableObject() : pos(), shape(), vel(), accel(), angularVel(), angularAccel(), mass(0)
+        RenderableObject() : pos(), shape(), vel(), accel(), angularVel(), angularAccel(), inverseMass(0)
         {};
 
-        RenderableObject(vector3f& pos) : pos(pos), shape(), vel(), accel(), angularVel(), angularAccel(), mass(0)
+        RenderableObject(vector3f& pos) : pos(pos), shape(), vel(), accel(), angularVel(), angularAccel(), inverseMass(0)
         {};
 
-        RenderableObject(vector3f& pos, float mass) : pos(pos), shape(), vel(), accel(), angularVel(), angularAccel(), mass(1/mass)
+        RenderableObject(vector3f& pos, float mass) : pos(pos), shape(), vel(), accel(), angularVel(), angularAccel(), inverseMass(1/mass)
         {};
 
-        RenderableObject(vector3f& pos, float mass, Shape& shape) : pos(pos), shape(shape), vel(), accel(), angularVel(), angularAccel(), mass(1/mass)
+        RenderableObject(vector3f& pos, float mass, Shape& shape) : pos(pos), shape(shape), vel(), accel(), angularVel(), angularAccel(), inverseMass(1/mass)
         {};
 
         ~RenderableObject()

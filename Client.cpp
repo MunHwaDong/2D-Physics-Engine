@@ -65,7 +65,6 @@ int main()
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
 
-	// check for shader compile errors
 	int success;
 	char infoLog[512];
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
@@ -80,7 +79,6 @@ int main()
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(fragmentShader);
 
-	// check for shader compile errors
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
@@ -94,7 +92,6 @@ int main()
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
 
-	// check for linking errors
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if (!success) {
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
@@ -104,10 +101,9 @@ int main()
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
+	//Data 선언
 	PhysicsEngine phyEngine;
-
 	vector3f initPos(0, 1.0f, 0);
-
 	Shape shape(3, 0.2f);
 
 	RenderableObject* obj1 = new RenderableObject(initPos, 5.0f, shape);
@@ -127,8 +123,7 @@ int main()
 	size_t vertexCount = 3; // 예시: 삼각형의 꼭지점이 3개인 경우
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f) * vertexCount, obj1->shape.vertices, GL_DYNAMIC_DRAW);
 
-	// `vector3f` 구조체의 바이트 오프셋을 사용
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vector3f), (void*)offsetof(vector3f, x));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
