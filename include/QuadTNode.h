@@ -6,7 +6,7 @@
 #include "vector3f.h"
 #include "IQTData.h"
 
-enum AREA {NW, NE, SW, SE};
+enum class AREA { NW, NE, SW, SE };
 
 class QuadTNode
 {
@@ -20,7 +20,7 @@ public:
 	vector3f minCoordi;
 	vector3f maxCoordi;
 
-	QuadTNode() : datas(),areaPtrs(4, nullptr), depth(0), minCoordi(vector3f(-100, -100, 0)), maxCoordi(vector3f(100, 100, 0))
+	QuadTNode() : datas(), areaPtrs(4, nullptr), depth(0), minCoordi(vector3f(-100, -100, 0)), maxCoordi(vector3f(100, 100, 0))
 	{};
 	QuadTNode(vector3f minCoordi, vector3f maxCoordi) : datas(), areaPtrs(4, nullptr), depth(0), minCoordi(minCoordi), maxCoordi(maxCoordi)
 	{};
@@ -35,47 +35,8 @@ public:
 	int GetNodeDepth() const;
 
 	std::vector<IQTData*> GetData() const;
-	int GetDataCount() const;
+	int GetNodeDataCount() const;
 	void PushData(IQTData* data) const;
 
 };
-
-QuadTNode::~QuadTNode()
-{
-	for(const auto& ptr : areaPtrs)
-	{
-		delete ptr;
-	}
-}
-
-QuadTNode* QuadTNode::GetAreaPtr(AREA area) const
-{
-	return areaPtrs.at(area);
-}
-
-void QuadTNode::SetAreaPtr(AREA area, QuadTNode* node)
-{
-	areaPtrs.at(area) = node;
-}
-
-int QuadTNode::GetNodeDepth() const
-{
-	return depth;
-}
-
-std::vector<IQTData*> QuadTNode::GetData() const
-{
-	return std::vector<IQTData*>(this->datas);
-}
-
-int QuadTNode::GetDataCount() const
-{
-	return datas.size();
-}
-
-void QuadTNode::PushData(IQTData* data) const
-{
-	const_cast<QuadTNode*>(this)->datas.push_back(data);
-}
-
 #endif
