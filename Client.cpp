@@ -1,7 +1,7 @@
-#include "PhysicsEngine.h"
+#include "include/PhysicsEngine.h"
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "dependencies/include/glad/glad.h"
+#include "dependencies/include/GLFW/glfw3.h"
 
 void FrameBufferResize(GLFWwindow* window, int width, int height)
 {
@@ -101,17 +101,17 @@ int main()
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	//Data ¼±¾ð
+	//Data ï¿½ï¿½ï¿½ï¿½
 	PhysicsEngine phyEngine;
 	vector3f initPos(0, 1.0f, 0);
-	Shape shape(3, 0.2f);
+	Shape* shape = new Shape(3, 0.2f);
 
 	RenderableObject* obj1 = new RenderableObject(initPos, 5.0f, shape);
 	obj1->UpdateVertices();
 
-	phyEngine.AddObject(*obj1);
+	phyEngine.AddObject(obj1);
 
-	// OpenGL ÄÚµå
+	// OpenGL ï¿½Úµï¿½
 	unsigned int VBO, VAO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -119,9 +119,9 @@ int main()
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	// µ¥ÀÌÅÍ Å©±â ¹× Æ÷ÀÎÅÍ¸¦ Á¤È®È÷ ÁöÁ¤
-	size_t vertexCount = 3; // ¿¹½Ã: »ï°¢ÇüÀÇ ²ÀÁöÁ¡ÀÌ 3°³ÀÎ °æ¿ì
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f) * vertexCount, obj1->shape.vertices, GL_DYNAMIC_DRAW);
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½È®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	size_t vertexCount = 3; // ï¿½ï¿½ï¿½ï¿½: ï¿½ï°¢ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 3ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f) *vertexCount, obj1->shape->vertices, GL_DYNAMIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -143,7 +143,7 @@ int main()
 
 		phyEngine.Update(0.02f);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f)* vertexCount, obj1->shape.vertices, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f)* vertexCount, obj1->shape->vertices, GL_DYNAMIC_DRAW);
 
 		glfwSwapBuffers(window);
 
