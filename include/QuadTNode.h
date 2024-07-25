@@ -2,6 +2,7 @@
 #define QUADTNODE_H
 
 #include <vector>
+#include <functional>
 #include "vector3f.h"
 #include "IQTData.h"
 
@@ -10,29 +11,32 @@ enum AREA {NW, NE, SW, SE};
 class QuadTNode
 {
 private:
-	std::vector<IQTData> datas;
+	std::vector<IQTData*> datas;
 	//NW -> NE -> SW -> SE
 	std::vector<QuadTNode*> areaPtrs;
+	int depth;
 
 public:
 	vector3f minCoordi;
 	vector3f maxCoordi;
 
-	QuadTNode() : minCoordi(vector3f(-100, 100, 0)), maxCoordi(vector3f(100, -100, 0)), areaPtrs(4, nullptr)
+	QuadTNode() : datas(),areaPtrs(4, nullptr), depth(0), minCoordi(vector3f(-100, -100, 0)), maxCoordi(vector3f(100, 100, 0))
 	{};
-	QuadTNode(vector3f minCoordi, vector3f maxCoordi) : minCoordi(minCoordi), maxCoordi(maxCoordi), areaPtrs(4, nullptr)
+	QuadTNode(vector3f minCoordi, vector3f maxCoordi) : datas(), areaPtrs(4, nullptr), depth(0), minCoordi(minCoordi), maxCoordi(maxCoordi)
 	{};
-	QuadTNode(vector3f minCoordi, vector3f maxCoordi, std::vector<QuadTNode*> areaPtr) : minCoordi(minCoordi), maxCoordi(maxCoordi), areaPtrs(areaPtr)
+	QuadTNode(vector3f minCoordi, vector3f maxCoordi, int depth) : datas(), areaPtrs(), depth(depth), minCoordi(minCoordi), maxCoordi(maxCoordi)
 	{};
 
 	~QuadTNode();
 
 	QuadTNode* GetAreaPtr(AREA area) const;
-	void SetAreaPtr();
+	void SetAreaPtr(AREA area, QuadTNode* node);
 
-	std::vector<IQTData> GetData() const;
+	int GetNodeDepth() const;
+
+	std::vector<IQTData*> GetData() const;
 	int GetDataCount() const;
-	void PushData(const IQTData& data) const;
+	void PushData(IQTData* data) const;
 
 };
 
@@ -49,9 +53,19 @@ QuadTNode* QuadTNode::GetAreaPtr(AREA area) const
 	return areaPtrs.at(area);
 }
 
-std::vector<IQTData> QuadTNode::GetData() const
+void QuadTNode::SetAreaPtr(AREA area, QuadTNode* node)
 {
-	return std::vector<IQTData>(this->datas);
+	areaPtrs.at(area) = node;
+}
+
+int QuadTNode::GetNodeDepth() const
+{
+	return depth;
+}
+
+std::vector<IQTData*> QuadTNode::GetData() const
+{
+	return std::vector<IQTData*>(this->datas);
 }
 
 int QuadTNode::GetDataCount() const
@@ -59,10 +73,9 @@ int QuadTNode::GetDataCount() const
 	return datas.size();
 }
 
-void QuadTNode::PushData(const IQTData& data) const
+void QuadTNode::PushData(IQTData* data) const
 {
-	const_cast<QuadTNode*>(this)->PushData(data);
-	static_cast<const QuadTNode*>(this);
+	const_cast<QuadTNode*>(this)->datas.push_back(data);
 }
 
-#endif QUADTNODE_H
+#endif

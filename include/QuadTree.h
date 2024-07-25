@@ -11,18 +11,21 @@ private:
 
 public:
 	QuadTree() : headptr(new QuadTNode), maxDepth(3)
-	{};
+	{
+		DivideSubArea(*headptr);
+	};
 
 	~QuadTree();
 
-	void InsertData(const QuadTNode& node, const IQTData& data);
+	void InsertData(const QuadTNode& node, IQTData* data);
 	bool CheckAABB(const QuadTNode& node, const vector3f& position);
-	void DivideSubArea(const QuadTNode& node);
 
-	void DeleteData();
+	//초기화에도 사용함으로 static 선언함
+	static void DivideSubArea(QuadTNode& node);
 
-	void TraversalTree() const;
-	void DivideArea();
+	void DeleteData(IQTData* data);
+
+	void TraversalTree(QuadTNode* node) const;
 };
 
-#endif QUAD_TREE_H
+#endif

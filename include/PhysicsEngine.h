@@ -19,7 +19,7 @@ class PhysicsEngine
 {
     private:
         const vector3f C_gravitycoeff;
-        std::vector<RenderableObject> objects;
+        std::vector<RenderableObject*> objects;
 
         void GenerateForce(const float deltaTime);
         void RigidbodyUpdate(const float deltaTime);
@@ -36,6 +36,6 @@ class PhysicsEngine
         {};
 
         void Update(const float deltaTime);
-        void AddObject(const RenderableObject& object);
+        void AddObject(RenderableObject* object);
 };
 #endif

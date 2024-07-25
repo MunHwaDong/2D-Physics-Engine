@@ -1,7 +1,6 @@
 #ifndef SHAPE_H
 #define SHAPE_H
 
-#include <iostream>
 #include "vector3f.h"
 #include "IQTData.h"
 

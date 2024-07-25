@@ -11,4 +11,4 @@ class IQTData
         virtual ~IQTData() = 0;
 };
 
-#endif IQTDATA_H
+#endif
