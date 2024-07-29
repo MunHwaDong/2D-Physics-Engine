@@ -2,7 +2,7 @@
 
 QuadTNode::~QuadTNode()
 {
-	for (const auto& ptr : areaPtrs)
+	for(const auto& ptr : areaPtrs)
 	{
 		delete ptr;
 	}
@@ -10,12 +10,12 @@ QuadTNode::~QuadTNode()
 
 QuadTNode* QuadTNode::GetAreaPtr(AREA area) const
 {
-	return areaPtrs.at(static_cast<int>(area));
+	return areaPtrs.at(area);
 }
 
 void QuadTNode::SetAreaPtr(AREA area, QuadTNode* node)
 {
-	areaPtrs.at(static_cast<int>(area)) = node;
+	areaPtrs.at(area) = node;
 }
 
 int QuadTNode::GetNodeDepth() const
@@ -23,12 +23,12 @@ int QuadTNode::GetNodeDepth() const
 	return depth;
 }
 
-std::vector<IQTData*> QuadTNode::GetData() const
+IQTData* QuadTNode::GetData(const int idx) const
 {
-	return std::vector<IQTData*>(this->datas);
+	return datas.at(idx);
 }
 
-int QuadTNode::GetNodeDataCount() const
+int QuadTNode::GetDataCount() const
 {
 	return datas.size();
 }

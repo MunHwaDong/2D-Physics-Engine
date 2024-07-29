@@ -1,5 +1,20 @@
 #include "QuadTree.h"
 
+Iterator QuadTree::begin() const
+{
+    return Iterator(headptr);
+}
+
+Iterator QuadTree::end() const
+{
+    return Iterator();
+}
+
+void QuadTree::Insert(IQTData* data)
+{
+    InsertData(*headptr, data);
+}
+
 void QuadTree::InsertData(const QuadTNode& node, IQTData* data)
 {
     /*
@@ -81,24 +96,6 @@ void QuadTree::DivideSubArea(QuadTNode& node)
 void QuadTree::DeleteData(IQTData* data)
 {
 
-}
-
-void QuadTree::TraversalTree(QuadTNode* node) const
-{
-    for(int idx = 0; idx < 4; ++idx)
-    {
-        if(node->GetAreaPtr(NW) != nullptr)
-            TraversalTree(node->GetAreaPtr(NW));
-
-        if(node->GetAreaPtr(NE) != nullptr)
-            TraversalTree(node->GetAreaPtr(NE));
-
-        if(node->GetAreaPtr(SW) != nullptr)
-            TraversalTree(node->GetAreaPtr(SW));
-
-        if(node->GetAreaPtr(SE) != nullptr)
-            TraversalTree(node->GetAreaPtr(SE));
-    }
 }
 
 QuadTree::~QuadTree()
