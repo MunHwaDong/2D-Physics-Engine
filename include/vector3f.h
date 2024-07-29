@@ -35,18 +35,22 @@ public:
 		return vector3f(this->x * operand, this->y * operand, this->z * operand);
 	}
 
-	void operator+=(const vector3f& operand)
+	vector3f& operator+=(const vector3f& operand)
 	{
 		this->x += operand.x;
 		this->y += operand.y;
 		this->z += operand.z;
+
+		return *this;
 	}
 
-	void operator=(const vector3f& operand)
+	vector3f& operator=(const vector3f& operand)
 	{
 		this->x = operand.x;
 		this->y = operand.y;
 		this->z = operand.z;
+
+		return *this;
 	}
 
 }; typedef vector3f Vector3f;

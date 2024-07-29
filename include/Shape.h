@@ -4,12 +4,12 @@
 #include "vector3f.h"
 #include "IQTData.h"
 
-class Shape : public IQTData
+class Shape
 {
 public:
 	int numVertices;
 	float distance;
-	
+
 	vector3f* vertices;
 	vector3f* normVec;
 
@@ -33,16 +33,6 @@ public:
 		delete[] vertices;
 		delete[] normVec;
 	};
-
-	virtual const vector3f* const GetPosition() const override
-	{
-		return vertices;
-	}
-
-	virtual const int GetDataCount() const override
-	{
-		return numVertices;
-	}
 };
 
 #endif
