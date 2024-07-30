@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include "RenderableObject.h"
+#include "QuadTree.h"
 
 /*
 
@@ -19,7 +20,8 @@ class PhysicsEngine
 {
     private:
         const vector3f C_gravitycoeff;
-        std::vector<RenderableObject*> objects;
+        //std::vector<RenderableObject*> objects;
+        QuadTree objects;
 
         void GenerateForce(const float deltaTime);
         void RigidbodyUpdate(const float deltaTime);
@@ -28,7 +30,7 @@ class PhysicsEngine
 
     public:
         //Constructor
-        PhysicsEngine() : C_gravitycoeff(0.0f, -9.8f, 0.0f), objects(0)
+        PhysicsEngine() : C_gravitycoeff(0.0f, -2.8f, 0.0f), objects()
         {};
         
         //Deconstructor

@@ -13,7 +13,7 @@ private:
 public:
 	QuadTree() : headptr(new QuadTNode), maxDepth(3)
 	{
-		//DivideSubArea(*headptr);
+		DivideSubArea(*headptr);
 	};
 
 	Iterator begin() const;

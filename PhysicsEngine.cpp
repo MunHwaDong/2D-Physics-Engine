@@ -3,9 +3,9 @@
 //��� ������Ʈ�鿡 �߷��� ���Ѵ�.
 void PhysicsEngine::GenerateForce(const float deltaTime)
 {
-	for (auto ele : objects)
+	for(auto iter = objects.begin(); iter != objects.end(); ++iter)
 	{
-		RenderableObject* obj = dynamic_cast<RenderableObject*>(ele);
+		RenderableObject* obj = dynamic_cast<RenderableObject*>(*iter);
 
 		obj->vel += (C_gravitycoeff * obj->inverseMass) * deltaTime;
 		obj->pos += obj->vel * deltaTime;
@@ -17,9 +17,9 @@ void PhysicsEngine::GenerateForce(const float deltaTime)
 
 void PhysicsEngine::RigidbodyUpdate(const float deltaTime)
 {
-	for (auto ele : objects)
+	for(auto iter = objects.begin(); iter != objects.end(); ++iter)
 	{
-		RenderableObject* obj = dynamic_cast<RenderableObject*>(ele);
+		RenderableObject* obj = dynamic_cast<RenderableObject*>(*iter);
 
 		obj->UpdateVertices();
 	}
@@ -27,7 +27,6 @@ void PhysicsEngine::RigidbodyUpdate(const float deltaTime)
 
 void PhysicsEngine::DetectCollision()
 {
-
 }
 
 void PhysicsEngine::ResolutionCollision()

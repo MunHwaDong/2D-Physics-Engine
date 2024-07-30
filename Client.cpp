@@ -3,6 +3,9 @@
 #include "dependencies/include/glad/glad.h"
 #include "dependencies/include/GLFW/glfw3.h"
 
+#include <chrono>
+#include <thread>
+
 void FrameBufferResize(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -101,17 +104,26 @@ int main()
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	//Data ����
+	//Data 
 	PhysicsEngine phyEngine;
-	vector3f initPos(0, 1.0f, 0);
+	vector3f initPos(0, -0.5f, 0);
 	Shape* shape = new Shape(3, 0.2f);
 
-	RenderableObject* obj1 = new RenderableObject(initPos, 5.0f, shape);
+	RenderableObject* obj1 = new RenderableObject(initPos, 15.0f, shape);
 	obj1->UpdateVertices();
 
 	phyEngine.AddObject(obj1);
 
-	// OpenGL �ڵ�
+	vector3f initPos1(0, 0.5f, 0);
+	Shape* shape1 = new Shape(3, 0.2f);
+
+	RenderableObject* obj2 = new RenderableObject(initPos1, 15.0f, shape1);
+	obj2->UpdateVertices();
+
+	phyEngine.AddObject(obj2);
+	/////////////////////////////////////////////////
+
+	// OpenGL
 	unsigned int VBO, VAO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -119,8 +131,8 @@ int main()
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	// ������ ũ�� �� �����͸� ��Ȯ�� ����
-	size_t vertexCount = 3; // ����: �ﰢ���� �������� 3���� ���
+
+	size_t vertexCount = 3;
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f) *vertexCount, obj1->shape->vertices, GL_DYNAMIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -128,6 +140,12 @@ int main()
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	using clock = std::chrono::high_resolution_clock;
+	using duration = std::chrono::duration<float>;
+	std::chrono::duration<float> timeStep(0.02f);
+
+	auto lastTime = clock::now();
 
 	//Render Loop
 	while (!glfwWindowShouldClose(window))
@@ -141,7 +159,17 @@ int main()
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
-		phyEngine.Update(0.02f);
+		auto currentTime = clock::now();
+		duration delTime = currentTime - lastTime;
+
+		if(delTime >= timeStep)
+		{
+			phyEngine.Update(0.02f);
+			lastTime = currentTime;
+
+            std::this_thread::sleep_for(timeStep - delTime);
+		}
+
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f)* vertexCount, obj1->shape->vertices, GL_DYNAMIC_DRAW);
 

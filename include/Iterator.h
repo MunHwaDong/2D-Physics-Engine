@@ -12,10 +12,10 @@ private:
     int dataIdx;
 
 public:
-    Iterator() : currentNode(nullptr), dataIdx(0)
+    Iterator() : nodePtrs(), currentNode(nullptr), dataIdx(0)
     {};
 
-    Iterator(QuadTNode* headPtr) : currentNode(nullptr), dataIdx(0)
+    Iterator(QuadTNode* headPtr) : nodePtrs(), currentNode(nullptr), dataIdx(0)
     {
         if(headPtr)
         {
@@ -28,23 +28,26 @@ public:
         }
     }
 
+    ~Iterator()
+    {};
+
     void Traversal(QuadTNode* node)
     {
         if(!node) return;
 
-        if(node->GetAreaPtr(AREA::SE))
+        if(node->GetAreaPtr(AREA::SE)->GetDataCount() != 0)
         {
             Traversal(node->GetAreaPtr(AREA::SE));
         }
-        if(node->GetAreaPtr(AREA::SW))
+        if(node->GetAreaPtr(AREA::SW)->GetDataCount() != 0)
         {
             Traversal(node->GetAreaPtr(AREA::SW));
         }
-        if(node->GetAreaPtr(AREA::NE))
+        if(node->GetAreaPtr(AREA::NE)->GetDataCount() != 0)
         {
             Traversal(node->GetAreaPtr(AREA::NE));
         }
-        if(node->GetAreaPtr(AREA::NW))
+        if(node->GetAreaPtr(AREA::NW)->GetDataCount() != 0)
         {
             Traversal(node->GetAreaPtr(AREA::NW));
         }
@@ -54,20 +57,24 @@ public:
 
     Iterator& operator++()
     {
+        //currentNode is nullptr
         if(!currentNode) return *this;
 
-        if(currentNode->GetDataCount() == dataIdx + 1)
+        ++dataIdx;
+
+        if(currentNode->GetDataCount() <= dataIdx)
         {
-            if(!nodePtrs.empty())
+            //모든 노드 순회 완료
+            if(nodePtrs.empty())
+            {
+                currentNode = nullptr;
+            }
+            else
             {
                 currentNode = nodePtrs.top();
                 nodePtrs.pop();
                 dataIdx = 0;
             }
-        }
-        else
-        {
-            ++dataIdx;
         }
 
         return *this;
