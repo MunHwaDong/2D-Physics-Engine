@@ -6,7 +6,7 @@
 4. vector3f를 구조체에서, Class로 분리함에 따라 Client.cpp에서 OpenGL VAO인자를 수정하였음
 5. Quadtree Insert 구현 완료 및 Iterator Pattern을 적용하여 for loop순회를 가능하게 구현하였음
 
-#Todo-list
+**#Todo-list**
 1. InputManager Class를 구현해서 펙토리 패턴을 적용해 RenderableObject Class의 객체 생성 책임을 부여하기
 2. 충돌 검출 구현
    2-1. QuadTree를 이용해 먼저 광역 탐지 수행 로직 구현
