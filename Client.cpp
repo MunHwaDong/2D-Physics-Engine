@@ -1,7 +1,7 @@
-#include "include/PhysicsEngine.h"
+#include "PhysicsEngine.h"
 
-#include "dependencies/include/glad/glad.h"
-#include "dependencies/include/GLFW/glfw3.h"
+#include "glad/glad.h"
+#include "include/GLFW/glfw3.h"
 
 #include <fstream>
 #include <string>
@@ -11,12 +11,6 @@
 void FrameBufferResize(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
-}
-
-void ProcessInput(GLFWwindow* window)
-{
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
 }
 
 void InitShader(unsigned int& shaderProgram)
@@ -114,6 +108,51 @@ void InitShader(unsigned int& shaderProgram)
     vertex_shader_code.close();
 }
 
+void InitializeBuffer(unsigned int& VBO, unsigned int& VAO, vector3f* vertices, size_t vertexCount)
+{
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f) * vertexCount, vertices, GL_DYNAMIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
+void RenderObject(unsigned int VAO, size_t vertexCount)
+{
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+}
+
+void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (action == GLFW_PRESS)
+    {
+        switch (key)
+        {
+        case GLFW_KEY_ESCAPE:
+            std::cout << "Escape key pressed" << std::endl;
+            glfwSetWindowShouldClose(window, true);
+            break;
+        case GLFW_KEY_W:
+            std::cout << "삼각형 생성" << std::endl;
+            // W 키를 눌렀을 때의 동작 구현
+            break;
+        case GLFW_KEY_A:
+            std::cout << "A key pressed" << std::endl;
+            // A 키를 눌렀을 때의 동작 구현
+            break;
+        }
+    }
+}
+
 int main()
 {
 	glfwInit();
@@ -149,6 +188,7 @@ int main()
 	unsigned int shaderProgram = 0;
 	InitShader(shaderProgram);
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////
 	//Data 
 	PhysicsEngine phyEngine;
 	vector3f initPos(0, -0.5f, 0);
@@ -166,25 +206,15 @@ int main()
 	obj2->UpdateVertices();
 
 	phyEngine.AddObject(obj2);
-	/////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// OpenGL
-	unsigned int VBO, VAO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
+    unsigned int VBO1, VAO1, VBO2, VAO2;
+    size_t vertexCount = 3;
 
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	size_t vertexCount = 3;
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f) *vertexCount, obj1->shape->vertices, GL_DYNAMIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+    InitializeBuffer(VBO1, VAO1, obj1->shape->vertices, vertexCount);
+    InitializeBuffer(VBO2, VAO2, obj2->shape->vertices, vertexCount);
+    glfwSetKeyCallback(window, KeyCallback);
 
 	using clock = std::chrono::high_resolution_clock;
 	using duration = std::chrono::duration<float>;
@@ -195,14 +225,16 @@ int main()
 	//Render Loop
 	while (!glfwWindowShouldClose(window))
 	{
-		ProcessInput(window);
-
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(shaderProgram);
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        // Render obj1
+        RenderObject(VAO1, vertexCount);
+
+        // Render obj2
+        RenderObject(VAO2, vertexCount);
 
 		auto currentTime = clock::now();
 		duration delTime = currentTime - lastTime;
@@ -215,8 +247,11 @@ int main()
             std::this_thread::sleep_for(timeStep - delTime);
 		}
 
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO1);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f)* vertexCount, obj1->shape->vertices, GL_DYNAMIC_DRAW);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f)* vertexCount, obj2->shape->vertices, GL_DYNAMIC_DRAW);
 
 		glfwSwapBuffers(window);
 
