@@ -1,17 +1,22 @@
 #include "include/PhysicsEngine.h"
 
-//��� ������Ʈ�鿡 �߷��� ���Ѵ�.
 void PhysicsEngine::GenerateForce(const float deltaTime)
 {
 	for(auto iter = objects.begin(); iter != objects.end(); ++iter)
 	{
 		RenderableObject* obj = dynamic_cast<RenderableObject*>(*iter);
 
+		if(!obj->isUseGravity) continue;
+
 		obj->vel += (C_gravitycoeff * obj->inverseMass) * deltaTime;
 		obj->pos += obj->vel * deltaTime;
 
-		std::cout << "obj 속도 : " << obj->vel.y << std::endl;
-		std::cout << obj->pos.x << " " << obj->pos.y << std::endl;
+		// std::cout << "obj 속도 : " << obj->vel.y << std::endl;
+		// std::cout << obj->pos.x << " " << obj->pos.y << std::endl;
+
+		std::cout << "obj 법선 : " << obj->shape->normVec[0].x << " " << obj->shape->normVec[0].y << std::endl;
+		std::cout << "obj 법선 : " << obj->shape->normVec[1].x << " " << obj->shape->normVec[1].y << std::endl;
+		std::cout << "obj 법선 : " << obj->shape->normVec[2].x << " " << obj->shape->normVec[2].y << std::endl;
 	}
 }
 

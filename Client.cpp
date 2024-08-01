@@ -1,7 +1,7 @@
 #include "PhysicsEngine.h"
 
 #include "glad/glad.h"
-#include "include/GLFW/glfw3.h"
+#include "dependencies/include/GLFW/glfw3.h"
 
 #include <fstream>
 #include <string>
@@ -142,12 +142,12 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
             glfwSetWindowShouldClose(window, true);
             break;
         case GLFW_KEY_W:
-            std::cout << "»ï°¢Çü »ý¼º" << std::endl;
-            // W Å°¸¦ ´­·¶À» ¶§ÀÇ µ¿ÀÛ ±¸Çö
+            std::cout << "ì‚¼ê°í˜• ìƒì„±" << std::endl;
+            // W í‚¤ë¥¼ ëˆŒë €ì„ ë•Œì˜ ë™ìž‘ êµ¬í˜„
             break;
         case GLFW_KEY_A:
             std::cout << "A key pressed" << std::endl;
-            // A Å°¸¦ ´­·¶À» ¶§ÀÇ µ¿ÀÛ ±¸Çö
+            // A í‚¤ë¥¼ ëˆŒë €ì„ ë•Œì˜ ë™ìž‘ êµ¬í˜„
             break;
         }
     }
@@ -196,14 +196,16 @@ int main()
 
 	RenderableObject* obj1 = new RenderableObject(initPos, 15.0f, shape);
 	obj1->UpdateVertices();
+	obj1->UpdateNormVectors();
 
 	phyEngine.AddObject(obj1);
 
 	vector3f initPos1(0, 0.5f, 0);
-	Shape* shape1 = new Shape(3, 0.2f);
+	Shape* shape1 = new Shape(3, 0.35f);
 
-	RenderableObject* obj2 = new RenderableObject(initPos1, 15.0f, shape1);
+	RenderableObject* obj2 = new RenderableObject(initPos1, 5.0f, shape1);
 	obj2->UpdateVertices();
+	obj2->UpdateNormVectors();
 
 	phyEngine.AddObject(obj2);
 	//////////////////////////////////////////////////////////////////////////////////////////////////
@@ -214,6 +216,7 @@ int main()
 
     InitializeBuffer(VBO1, VAO1, obj1->shape->vertices, vertexCount);
     InitializeBuffer(VBO2, VAO2, obj2->shape->vertices, vertexCount);
+
     glfwSetKeyCallback(window, KeyCallback);
 
 	using clock = std::chrono::high_resolution_clock;
