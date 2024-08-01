@@ -18,24 +18,30 @@ public:
     //Store inverse of mass
     float inverseMass;
 
+    bool isUseGravity;
+
     Shape* shape;
 
-    RenderableObject() : pos(), vel(), accel(), angularVel(), angularAccel(), inverseMass(0), shape()
+    RenderableObject() : pos(), vel(), accel(), angularVel(), angularAccel(), inverseMass(0), isUseGravity(true),  shape()
     {};
 
-    RenderableObject(vector3f& pos) : pos(pos), vel(), accel(), angularVel(), angularAccel(), inverseMass(0), shape()
+    RenderableObject(vector3f& pos) : pos(pos), vel(), accel(), angularVel(), angularAccel(), inverseMass(0), isUseGravity(true), shape()
     {};
 
-    RenderableObject(vector3f& pos, float mass) : pos(pos), vel(), accel(), angularVel(), angularAccel(), inverseMass(1 / mass), shape()
+    RenderableObject(vector3f& pos, float mass) : pos(pos), vel(), accel(), angularVel(), angularAccel(), inverseMass(1 / mass), isUseGravity(true), shape()
     {};
 
-    RenderableObject(vector3f& pos, float mass, Shape* shape) : pos(pos), vel(), accel(), angularVel(), angularAccel(), inverseMass(1 / mass), shape(shape)
+    RenderableObject(vector3f& pos, float mass, Shape* shape) : pos(pos), vel(), accel(), angularVel(), angularAccel(), inverseMass(1 / mass), isUseGravity(true), shape(shape)
+    {};
+
+    RenderableObject(vector3f& pos, float mass, bool isUseGravity, Shape* shape) : pos(pos), vel(), accel(), angularVel(), angularAccel(), inverseMass(1 / mass), isUseGravity(isUseGravity), shape(shape)
     {};
 
     ~RenderableObject()
     {};
 
     void UpdateVertices();
+    void UpdateNormVectors();
 
     virtual const vector3f* const GetPosition() const override
     {

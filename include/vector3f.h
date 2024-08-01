@@ -30,6 +30,16 @@ public:
 		return vector3f(this->x + operand, this->y + operand, this->z + operand);
 	}
 
+	const vector3f operator-(const vector3f& operand) const
+	{
+		return vector3f(this->x - operand.x, this->y - operand.y, this->z - operand.z);
+	}
+
+	const vector3f operator-(const float operand) const
+	{
+		return vector3f(this->x - operand, this->y - operand, this->z - operand);
+	}
+
 	const vector3f operator*(const float operand) const
 	{
 		return vector3f(this->x * operand, this->y * operand, this->z * operand);

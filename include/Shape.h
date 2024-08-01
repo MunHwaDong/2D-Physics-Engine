@@ -2,6 +2,7 @@
 #define SHAPE_H
 
 #include "vector3f.h"
+#include "Utill.h"
 #include "IQTData.h"
 
 class Shape
@@ -11,6 +12,7 @@ public:
 	float distance;
 
 	vector3f* vertices;
+	//두 정점으로 만들어진 변에 대한 법선 벡터
 	vector3f* normVec;
 
 	Shape() : numVertices(0), distance(0), vertices(0), normVec(0)

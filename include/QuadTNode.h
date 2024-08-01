@@ -2,7 +2,8 @@
 #define QUADTNODE_H
 
 #include <vector>
-#include <functional>
+#include <utility>
+
 #include "vector3f.h"
 #include "IQTData.h"
 
