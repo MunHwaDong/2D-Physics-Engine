@@ -14,6 +14,10 @@ public:
 
     vector3f angularVel;
     vector3f angularAccel;
+    
+    //for collision detection (Square)
+    vector3f objMinAABB;
+    vector3f objMaxAABB;
 
     //Store inverse of mass
     float inverseMass;
@@ -22,26 +26,38 @@ public:
 
     Shape* shape;
 
-    RenderableObject() : pos(), vel(), accel(), angularVel(), angularAccel(), inverseMass(0), isUseGravity(true),  shape()
+    RenderableObject() : pos(), vel(), accel(), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(0), isUseGravity(true),  shape()
     {};
 
-    RenderableObject(vector3f& pos) : pos(pos), vel(), accel(), angularVel(), angularAccel(), inverseMass(0), isUseGravity(true), shape()
+    RenderableObject(vector3f& pos) : pos(pos), vel(), accel(), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(0), isUseGravity(true), shape()
     {};
 
-    RenderableObject(vector3f& pos, float mass) : pos(pos), vel(), accel(), angularVel(), angularAccel(), inverseMass(1 / mass), isUseGravity(true), shape()
+    RenderableObject(vector3f& pos, float mass)
+        : pos(pos), vel(), accel(), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(1 / mass), isUseGravity(true), shape()
     {};
 
-    RenderableObject(vector3f& pos, float mass, Shape* shape) : pos(pos), vel(), accel(), angularVel(), angularAccel(), inverseMass(1 / mass), isUseGravity(true), shape(shape)
-    {};
+    RenderableObject(vector3f& pos, float mass, Shape* shape)
+        : pos(pos), vel(), accel(), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(1 / mass), isUseGravity(true), shape(shape)
+    {
+        UpdateVertices();
+        UpdateNormVectors();
+        UpdateObjAABB();
+    };
 
-    RenderableObject(vector3f& pos, float mass, bool isUseGravity, Shape* shape) : pos(pos), vel(), accel(), angularVel(), angularAccel(), inverseMass(1 / mass), isUseGravity(isUseGravity), shape(shape)
-    {};
+    RenderableObject(vector3f& pos, float mass, bool isUseGravity, Shape* shape)
+        : pos(pos), vel(), accel(), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(1 / mass), isUseGravity(isUseGravity), shape(shape)
+    {
+        UpdateVertices();
+        UpdateNormVectors();
+        UpdateObjAABB();
+    };
 
     ~RenderableObject()
     {};
 
     void UpdateVertices();
     void UpdateNormVectors();
+    void UpdateObjAABB();
 
     virtual const vector3f* const GetPosition() const override
     {

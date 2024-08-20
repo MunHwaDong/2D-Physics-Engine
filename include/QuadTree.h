@@ -3,8 +3,8 @@
 
 #include "QuadTNode.h"
 #include "Iterator.h"
-
-using CollisionablePair = std::pair<IQTData*, IQTData*>;
+#include "Utill.h"
+#include <unordered_set>
 
 class QuadTree
 {
@@ -13,7 +13,7 @@ private:
 	int maxDepth;
 
 	//Public Insert 도우미 함수들
-	void InsertData(const QuadTNode& node, IQTData* data);
+	void InsertRecursive(const QuadTNode& node, IQTData* data);
 	bool CheckAABB(const QuadTNode& node, const vector3f& position);
 
 	//초기화에도 사용함으로 static 선언함
@@ -32,6 +32,8 @@ public:
 	void Insert(IQTData* data);
 
 	//Query 관련 함수들
+	std::unordered_set<IQTData*> Query(vector3f& min, vector3f& max);
+	void QueryRecusive(QuadTNode* node, vector3f& min, vector3f& max, std::unordered_set<IQTData*>& foundObj) const;
 
 	void DeleteData(IQTData* data);
 

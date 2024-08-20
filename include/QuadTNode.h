@@ -2,7 +2,7 @@
 #define QUADTNODE_H
 
 #include <vector>
-#include <utility>
+#include <unordered_set>
 
 #include "vector3f.h"
 #include "IQTData.h"

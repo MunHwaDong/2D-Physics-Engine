@@ -14,6 +14,9 @@ public:
 	vector3f() : x(0), y(0), z(0)
 	{};
 
+	vector3f(int value) : x(value), y(value), z(value)
+	{};
+
 	vector3f(float x, float y, float z) : x(x), y(y), z(z)
 	{};
 

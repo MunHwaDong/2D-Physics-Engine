@@ -2,6 +2,9 @@
 #define MATRIX3F_H
 
 #include "vector3f.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 //Definition of 3x3 Matrix
 class Matrix3f
@@ -48,13 +51,28 @@ public:
         return result;
     }
 
-    //Vector Linear Transform
+    //Linear Transform
     const vector3f operator*(const vector3f& operand) const
     {
-        return vector3f(this->mat3[0].DotProduct(operand), this->mat3[1].DotProduct(operand), this->mat3[2].DotProduct(operand));
+        return vector3f(
+            this->mat3[0].DotProduct(operand),
+            this->mat3[1].DotProduct(operand),
+            this->mat3[2].DotProduct(operand)
+            );
     }
 
-    //행렬곱
+    //For Local to World Coordinate
+    void Transform(vector3f& operand) const
+    {
+        float x = this->mat3[0][0] * operand.x + this->mat3[0][1] * operand.y + this->mat3[0][2];
+        float y = this->mat3[1][0] * operand.x + this->mat3[1][1] * operand.y + this->mat3[1][2];
+        float w = this->mat3[2][0] * operand.x + this->mat3[2][1] * operand.y + this->mat3[2][2];
+
+        operand.x = x / w;
+        operand.y = y / w;
+    }
+
+    //Matrix Multiplication
     const Matrix3f operator*(const Matrix3f& operand) const
     {
         Matrix3f result;
@@ -94,6 +112,15 @@ public:
     {
         if(row >= 3) throw std::out_of_range("Bad Input");
         else return mat3[row];
+    }
+
+    // glm::mat3로 변환하는 메서드
+    glm::mat3 TransGlmMat3() const {
+        return glm::mat3(
+            mat3[0][0], mat3[0][1], mat3[0][2],
+            mat3[1][0], mat3[1][1], mat3[1][2],
+            mat3[2][0], mat3[2][1], mat3[2][2]
+        );
     }
 
 }; typedef Matrix3f matrix3f;

@@ -22,6 +22,8 @@ class PhysicsEngine
         const vector3f C_gravitycoeff;
         //std::vector<RenderableObject*> objects;
         QuadTree objects;
+        //model coordi -> world coordi
+        Matrix3f modelMatrix;
 
         void GenerateForce(const float deltaTime);
         void RigidbodyUpdate(const float deltaTime);
@@ -31,6 +33,9 @@ class PhysicsEngine
     public:
         //Constructor
         PhysicsEngine() : C_gravitycoeff(0.0f, -9.8f, 0.0f), objects()
+        {};
+
+        PhysicsEngine(int worldSize) : C_gravitycoeff(0.0f, -9.8f, 0.0f), objects(), modelMatrix(Utill::GetScaleMatrix(vector3f(worldSize)))
         {};
         
         //Deconstructor
