@@ -19,3 +19,9 @@ void RenderableObject::UpdateNormVectors()
 		shape->normVec[idx] = Utill::GetNormVector(shape->vertices[idx % numVertex], shape->vertices[(idx + 1) % numVertex]);
 	}
 }
+
+void RenderableObject::UpdateObjAABB()
+{
+    objMinAABB = pos + vector3f(-shape->distance, -shape->distance, 0);
+    objMaxAABB = pos + vector3f(shape->distance, shape->distance, 0);
+}

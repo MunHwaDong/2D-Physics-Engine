@@ -8,6 +8,8 @@
 #include <chrono>
 #include <thread>
 
+GLint locPVM;
+
 void FrameBufferResize(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -101,6 +103,8 @@ void InitShader(unsigned int& shaderProgram)
         return;
     }
 
+    locPVM = glGetUniformLocation(shaderProgram, "locPVM");
+
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
 
@@ -127,6 +131,11 @@ void InitializeBuffer(unsigned int& VBO, unsigned int& VAO, vector3f* vertices, 
 
 void RenderObject(unsigned int VAO, size_t vertexCount)
 {
+
+    glm::mat3 pvm = Utill::GetScaleMatrix(0.01f).TransGlmMat3();
+
+    glUniformMatrix3fv(locPVM, 1, GL_FALSE, glm::value_ptr(pvm));
+
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 }
@@ -190,22 +199,17 @@ int main()
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
 	//Data 
-	PhysicsEngine phyEngine;
+	PhysicsEngine phyEngine(100);
 	vector3f initPos(0, -0.5f, 0);
 	Shape* shape = new Shape(3, 0.2f);
 
 	RenderableObject* obj1 = new RenderableObject(initPos, 15.0f, shape);
-	obj1->UpdateVertices();
-	obj1->UpdateNormVectors();
-
 	phyEngine.AddObject(obj1);
 
 	vector3f initPos1(0, 0.5f, 0);
 	Shape* shape1 = new Shape(3, 0.35f);
 
 	RenderableObject* obj2 = new RenderableObject(initPos1, 5.0f, shape1);
-	obj2->UpdateVertices();
-	obj2->UpdateNormVectors();
 
 	phyEngine.AddObject(obj2);
 	//////////////////////////////////////////////////////////////////////////////////////////////////
