@@ -10,6 +10,10 @@
 
 GLint locPVM;
 
+Matrix3f projection;
+Matrix3f view;
+Matrix3f model;
+
 void FrameBufferResize(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -131,13 +135,16 @@ void InitializeBuffer(unsigned int& VBO, unsigned int& VAO, vector3f* vertices, 
 
 void RenderObject(unsigned int VAO, size_t vertexCount)
 {
-
-    glm::mat3 pvm = Utill::GetScaleMatrix(0.01f).TransGlmMat3();
-
-    glUniformMatrix3fv(locPVM, 1, GL_FALSE, glm::value_ptr(pvm));
-
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+}
+
+void SetTransform(const vector3f& transVec, const vector3f& scaleVec, float theta = 0)
+{
+    projection = Utill::GetIdentityMatrix();
+    view = Utill::GetIdentityMatrix();
+
+    model = Utill::GetTranslateMatrix(transVec) * Utill::GetRotateMatrix(theta) * Utill::GetScaleMatrix(scaleVec);
 }
 
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)

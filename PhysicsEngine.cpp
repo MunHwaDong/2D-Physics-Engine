@@ -11,6 +11,9 @@ void PhysicsEngine::GenerateForce(const float deltaTime)
 		obj->vel += (C_gravitycoeff * obj->inverseMass) * deltaTime;
 		obj->pos += obj->vel * deltaTime;
 
+		obj->angularVel += (C_gravitycoeff * obj->inverseMass) * deltaTime;
+		obj->theta += obj->angularVel * deltaTime;
+
 		std::cout << obj->pos.x << " " << obj->pos.y << std::endl;
 
 		//std::cout << "obj 법선 : " << obj->shape->normVec[0].x << " " << obj->shape->normVec[0].y << std::endl;
@@ -47,12 +50,5 @@ void PhysicsEngine::Update(const float deltaTime)
 
 void PhysicsEngine::AddObject(RenderableObject* object)
 {
-	modelMatrix.Transform(object->pos);
-
-	//나중에 수정(임시 코드)
-	object->shape->distance *= 100;
-
-	object->UpdateVertices();
-
 	objects.Insert(dynamic_cast<IQTData*>(object));
 }
