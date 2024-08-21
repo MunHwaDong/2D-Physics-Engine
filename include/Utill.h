@@ -43,7 +43,17 @@ public:
         return Matrix3f(
                         vector3f(scale.x, 0.0f, 0.0f),
                         vector3f(0.0f, scale.y, 0.0f),
-                        vector3f(0.0f, 0.0f, 1.0f));
+                        vector3f(0.0f, 0.0f, 1.0f)
+        );
+    }
+
+    static const Matrix3f GetIdentityMatrix()
+    {
+        return Matrix3f(
+                vector3f(1.0f, 0.0f, 0.0f),
+                vector3f(0.0f, 1.0f, 0.0f),
+                vector3f(0.0f, 0.0f, 1.0f)
+        );
     }
 };
 
