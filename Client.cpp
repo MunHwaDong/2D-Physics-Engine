@@ -1,22 +1,30 @@
 #include "PhysicsEngine.h"
 
 #include "glad/glad.h"
-#include "dependencies/include/GLFW/glfw3.h"
+#include "GLFW/glfw3.h"
 
 #include <fstream>
 #include <string>
 #include <chrono>
 #include <thread>
 
-GLint locPVM;
+GLsizei SCR_WIDTH = 1400;
+GLsizei SCR_HEIGHT = 700;
 
-Matrix3f projection;
-Matrix3f view;
-Matrix3f model;
+GLint locPV;
+
+//Matrix4f projection;
+//Matrix4f view;
+
+glm::mat4 projection;
+glm::mat4 view;
+glm::mat4 PV;
+
+Matrix4f model;
 
 void FrameBufferResize(GLFWwindow* window, int width, int height)
 {
-	glViewport(0, 0, width, height);
+    glViewport(0, 0, width, height);
 }
 
 void InitShader(unsigned int& shaderProgram)
@@ -41,9 +49,9 @@ void InitShader(unsigned int& shaderProgram)
 
     vertex_shader_code.open("VertexShader.glsl");
 
-    if(vertex_shader_code.is_open())
+    if (vertex_shader_code.is_open())
     {
-        while(getline(vertex_shader_code, tmp_string1))
+        while (getline(vertex_shader_code, tmp_string1))
         {
             v_shader_string += (tmp_string1 + "\n");
         }
@@ -56,9 +64,9 @@ void InitShader(unsigned int& shaderProgram)
 
     fragment_shader_code.open("FragmentShader.glsl");
 
-    if(fragment_shader_code.is_open())
+    if (fragment_shader_code.is_open())
     {
-        while(getline(fragment_shader_code, tmp_string2))
+        while (getline(fragment_shader_code, tmp_string2))
         {
             f_shader_string += (tmp_string2 + "\n");
         }
@@ -76,7 +84,7 @@ void InitShader(unsigned int& shaderProgram)
     glCompileShader(vertex_shader);
     glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
 
-    if(!success)
+    if (!success)
     {
         glGetShaderInfoLog(vertex_shader, 512, NULL, info);
         std::cout << "Vertex Shader Compile Error : " << info << std::endl;
@@ -86,7 +94,7 @@ void InitShader(unsigned int& shaderProgram)
     glCompileShader(fragment_shader);
 
     glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
-    if(!success)
+    if (!success)
     {
         glGetShaderInfoLog(fragment_shader, 512, NULL, info);
         std::cout << "Fragment Shader Compile Error : " << info << std::endl;
@@ -100,14 +108,14 @@ void InitShader(unsigned int& shaderProgram)
 
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 
-    if(!success)
+    if (!success)
     {
         glGetProgramInfoLog(shaderProgram, 512, NULL, info);
         std::cout << "Shader Linking Error : " << info << std::endl;
         return;
     }
 
-    locPVM = glGetUniformLocation(shaderProgram, "locPVM");
+    locPV = glGetUniformLocation(shaderProgram, "locPVM");
 
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
@@ -141,10 +149,18 @@ void RenderObject(unsigned int VAO, size_t vertexCount)
 
 void SetTransform(const vector3f& transVec, const vector3f& scaleVec, float theta = 0)
 {
-    projection = Utill::GetIdentityMatrix();
-    view = Utill::GetIdentityMatrix();
+    //projection = Utill::GetIdentityMatrix4f();
+    //view = Utill::GetIdentityMatrix4f();
 
-    model = Utill::GetTranslateMatrix(transVec) * Utill::GetRotateMatrix(theta) * Utill::GetScaleMatrix(scaleVec);
+    view = glm::mat4(1.0f);
+    projection = glm::mat4(1.0f);
+
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -200.0f));
+    projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 500.0f);
+
+    model = Utill::GetScaleMatrix4f(scaleVec) * Utill::GetRotateMatrix4f(theta, vector3f(0.0f, 0.0f, 1.0f)) * Utill::GetTranslateMatrix4f(transVec);
+
+    PV = projection * view;
 }
 
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -171,57 +187,86 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 
 int main()
 {
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_CORE_PROFILE, GL_TRUE);
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_CORE_PROFILE, GL_TRUE);
 
-	#ifdef __APPLE__
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	#endif
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 
-	GLFWwindow* window = glfwCreateWindow(1400, 700, "My 2D Physics Engine", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "My 2D Physics Engine", nullptr, nullptr);
 
-	if (window == nullptr)
-	{
-		std::cout << "Fail to Create Window" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
+    if (window == nullptr)
+    {
+        std::cout << "Fail to Create Window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
 
-	glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(window);
 
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Fail to Init GLAD" << std::endl;
-		return -1;
-	}
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::cout << "Fail to Init GLAD" << std::endl;
+        return -1;
+    }
 
-	glViewport(0, 0, 1400, 700);
+    glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
-	glfwSetFramebufferSizeCallback(window, FrameBufferResize);
+    glfwSetFramebufferSizeCallback(window, FrameBufferResize);
 
-	unsigned int shaderProgram = 0;
-	InitShader(shaderProgram);
+    unsigned int shaderProgram = 0;
+    InitShader(shaderProgram);
 
+    PhysicsEngine phyEngine;
     //////////////////////////////////////////////////////////////////////////////////////////////////
-	//Data 
-	PhysicsEngine phyEngine(100);
-	vector3f initPos(0, -0.5f, 0);
-	Shape* shape = new Shape(3, 0.2f);
+    //Data 
+    //vector3f initPos(0, -0.5f, 0);
+    //Shape* shape = new Shape(3, 0.2f);
 
-	RenderableObject* obj1 = new RenderableObject(initPos, 15.0f, shape);
-	phyEngine.AddObject(obj1);
+    //RenderableObject* obj1 = new RenderableObject(initPos, 15.0f, shape);
+    //phyEngine.AddObject(obj1);
 
-	vector3f initPos1(0, 0.5f, 0);
-	Shape* shape1 = new Shape(3, 0.35f);
+    //vector3f initPos1(0, 0.5f, 0);
+    //Shape* shape1 = new Shape(3, 0.35f);
 
-	RenderableObject* obj2 = new RenderableObject(initPos1, 5.0f, shape1);
+    //RenderableObject* obj2 = new RenderableObject(initPos1, 5.0f, shape1);
 
-	phyEngine.AddObject(obj2);
-	//////////////////////////////////////////////////////////////////////////////////////////////////
+    //phyEngine.AddObject(obj2);
 
-	// OpenGL
+    vector3f obj1InitPos(0, -0.5f, 0);
+    Shape* shape1 = new Shape(3, 0.2f);
+    RenderableObject* obj1 = new RenderableObject(15.0f, shape1);
+
+    SetTransform(obj1InitPos, vector3f(100, 100, 0), 45.0f);
+    model.Transform(obj1->pos);
+    obj1->shape->distance = 20;
+    for (int i = 0; i < 3; ++i)
+    {
+        model.Transform(obj1->shape->vertices[i]);
+    }
+
+    vector3f obj2InitPos(0, 0.5f, 0);
+    Shape* shape2 = new Shape(3, 0.2f);
+    RenderableObject* obj2 = new RenderableObject(5.0f, shape2);
+
+    SetTransform(obj2InitPos, vector3f(100, 100, 0), 0);
+    model.Transform(obj2->pos);
+    obj2->shape->distance = 20;
+    for (int i = 0; i < 3; ++i)
+    {
+        model.Transform(obj2->shape->vertices[i]);
+    }
+
+    phyEngine.AddObject(obj1);
+    phyEngine.AddObject(obj2);
+
+    glUniformMatrix4fv(locPV, 1, GL_FALSE, glm::value_ptr(PV));
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // OpenGL
     unsigned int VBO1, VAO1, VBO2, VAO2;
     size_t vertexCount = 3;
 
@@ -230,19 +275,20 @@ int main()
 
     glfwSetKeyCallback(window, KeyCallback);
 
-	using clock = std::chrono::high_resolution_clock;
-	using duration = std::chrono::duration<float>;
-	std::chrono::duration<float> timeStep(0.02f);
+    using clock = std::chrono::high_resolution_clock;
+    using duration = std::chrono::duration<float>;
+    std::chrono::duration<float> timeStep(0.02f);
 
-	auto lastTime = clock::now();
+    auto lastTime = clock::now();
 
-	//Render Loop
-	while (!glfwWindowShouldClose(window))
-	{
-		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+    //Render Loop
+    while (!glfwWindowShouldClose(window))
+    {
+        glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(shaderProgram);
+        glUseProgram(shaderProgram);
+        glUniformMatrix4fv(locPV, 1, GL_FALSE, glm::value_ptr(PV));
 
         // Render obj1
         RenderObject(VAO1, vertexCount);
@@ -250,28 +296,28 @@ int main()
         // Render obj2
         RenderObject(VAO2, vertexCount);
 
-		auto currentTime = clock::now();
-		duration delTime = currentTime - lastTime;
+        auto currentTime = clock::now();
+        duration delTime = currentTime - lastTime;
 
-		if(delTime >= timeStep)
-		{
-			phyEngine.Update(0.02f);
-			lastTime = currentTime;
+        if (delTime >= timeStep)
+        {
+            phyEngine.Update(0.02f);
+            lastTime = currentTime;
 
             std::this_thread::sleep_for(timeStep - delTime);
-		}
+        }
 
-		glBindBuffer(GL_ARRAY_BUFFER, VBO1);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f)* vertexCount, obj1->shape->vertices, GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO1);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f) * vertexCount, obj1->shape->vertices, GL_DYNAMIC_DRAW);
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO2);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f)* vertexCount, obj2->shape->vertices, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vector3f) * vertexCount, obj2->shape->vertices, GL_DYNAMIC_DRAW);
 
-		glfwSwapBuffers(window);
+        glfwSwapBuffers(window);
 
-		glfwPollEvents();
-	}
+        glfwPollEvents();
+    }
 
-	glfwTerminate();
-	return 0;
+    glfwTerminate();
+    return 0;
 }

@@ -14,10 +14,10 @@ void RenderableObject::UpdateNormVectors()
 {
     int numVertex = shape->numVertices;
 
-    for(int idx = 0; idx < numVertex; ++idx)
-	{
-		shape->normVec[idx] = Utill::GetNormVector(shape->vertices[idx % numVertex], shape->vertices[(idx + 1) % numVertex]);
-	}
+    for (int idx = 0; idx < numVertex; ++idx)
+    {
+        shape->normVec[idx] = Utill::GetNormVector(shape->vertices[idx % numVertex], shape->vertices[(idx + 1) % numVertex]);
+    }
 }
 
 void RenderableObject::UpdateObjAABB()

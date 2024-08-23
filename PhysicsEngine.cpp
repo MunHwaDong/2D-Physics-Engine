@@ -1,12 +1,12 @@
-#include "include/PhysicsEngine.h"
+#include "PhysicsEngine.h"
 
 void PhysicsEngine::GenerateForce(const float deltaTime)
 {
-	for(auto iter = objects.begin(); iter != objects.end(); ++iter)
+	for (auto iter = objects.begin(); iter != objects.end(); ++iter)
 	{
 		RenderableObject* obj = dynamic_cast<RenderableObject*>(*iter);
 
-		if(!obj->isUseGravity) continue;
+		if (!obj->isUseGravity) continue;
 
 		obj->vel += (C_gravitycoeff * obj->inverseMass) * deltaTime;
 		obj->pos += obj->vel * deltaTime;
@@ -24,7 +24,7 @@ void PhysicsEngine::GenerateForce(const float deltaTime)
 
 void PhysicsEngine::RigidbodyUpdate(const float deltaTime)
 {
-	for(auto iter = objects.begin(); iter != objects.end(); ++iter)
+	for (auto iter = objects.begin(); iter != objects.end(); ++iter)
 	{
 		RenderableObject* obj = dynamic_cast<RenderableObject*>(*iter);
 
