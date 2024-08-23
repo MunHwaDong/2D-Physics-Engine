@@ -16,7 +16,7 @@ public:
 
     vector3f angularVel;
     vector3f angularAccel;
-    
+
     //for collision detection (Square)
     vector3f objMinAABB;
     vector3f objMaxAABB;
@@ -28,10 +28,10 @@ public:
 
     Shape* shape;
 
-    RenderableObject() : pos(), vel(), accel(), theta(),  angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(0), isUseGravity(true),  shape()
+    RenderableObject() : pos(), vel(), accel(), theta(), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(0), isUseGravity(true), shape()
     {};
 
-    RenderableObject(vector3f& pos) : pos(pos), vel(), accel(), theta(),  angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(0), isUseGravity(true), shape()
+    RenderableObject(vector3f& pos) : pos(pos), vel(), accel(), theta(), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(0), isUseGravity(true), shape()
     {};
 
     RenderableObject(vector3f& pos, float mass)
@@ -42,7 +42,16 @@ public:
         : pos(pos), vel(), accel(), theta(theta), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(1 / mass), isUseGravity(true), shape()
     {};
 
-    RenderableObject(vector3f& pos, vector3f& theta, float mass, Shape* shape)
+    //tmp code -> test for transform
+    RenderableObject(float mass, Shape* shape)
+        : pos(), vel(), accel(), theta(), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(1 / mass), isUseGravity(true), shape(shape)
+    {
+        UpdateVertices();
+        UpdateNormVectors();
+        UpdateObjAABB();
+    };
+
+    RenderableObject(vector3f& pos, float mass, Shape* shape)
         : pos(pos), vel(), accel(), theta(theta), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(1 / mass), isUseGravity(true), shape(shape)
     {
         UpdateVertices();

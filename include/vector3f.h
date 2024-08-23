@@ -1,6 +1,7 @@
 #ifndef VECTOR3F_H
 #define VECTOR3F_H
 
+#include <cmath>
 #include <stdexcept>
 #include <algorithm>
 
@@ -63,24 +64,24 @@ public:
 	vector3f& operator=(const vector3f& operand)
 	{
 		//자기 대입 방지
-		if(this != &operand)
+		if (this != &operand)
 		{
 			this->x = operand.x;
 			this->y = operand.y;
 			this->z = operand.z;
 		}
-		
+
 		return *this;
 	}
 
 	//To extension for Matrix
 	float& operator[](const int idx)
 	{
-		if(idx >= 3) std::out_of_range("Bad Input");
+		if (idx >= 3) std::out_of_range("Bad Input");
 
-		if(idx == 0)
+		if (idx == 0)
 			return this->x;
-		else if(idx == 1)
+		else if (idx == 1)
 			return this->y;
 		else
 			return this->z;
@@ -90,6 +91,11 @@ public:
 	const float DotProduct(const vector3f& operand) const
 	{
 		return (this->x * operand.x) + (this->y * operand.y) + (this->z * operand.z);
+	}
+
+	const float length() const
+	{
+		return std::sqrt(x * x + y * y + z * z);
 	}
 
 }; typedef vector3f Vector3f;

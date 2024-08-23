@@ -18,31 +18,26 @@
 
 class PhysicsEngine
 {
-    private:
-        const vector3f C_gravitycoeff;
-        //std::vector<RenderableObject*> objects;
-        QuadTree objects;
-        //model coordi -> world coordi
-        Matrix3f modelMatrix;
+private:
+    const vector3f C_gravitycoeff;
+    //std::vector<RenderableObject*> objects;
+    QuadTree objects;
 
-        void GenerateForce(const float deltaTime);
-        void RigidbodyUpdate(const float deltaTime);
-        void DetectCollision();
-        void ResolutionCollision();
+    void GenerateForce(const float deltaTime);
+    void RigidbodyUpdate(const float deltaTime);
+    void DetectCollision();
+    void ResolutionCollision();
 
-    public:
-        //Constructor
-        PhysicsEngine() : C_gravitycoeff(0.0f, -9.8f, 0.0f), objects()
-        {};
+public:
+    //Constructor
+    PhysicsEngine() : C_gravitycoeff(0.0f, -9.8f, 0.0f), objects()
+    {};
 
-        PhysicsEngine(int worldSize) : C_gravitycoeff(0.0f, -9.8f, 0.0f), objects(), modelMatrix(Utill::GetScaleMatrix(vector3f(worldSize)))
-        {};
-        
-        //Deconstructor
-        ~PhysicsEngine()
-        {};
+    //Deconstructor
+    ~PhysicsEngine()
+    {};
 
-        void Update(const float deltaTime);
-        void AddObject(RenderableObject* object);
+    void Update(const float deltaTime);
+    void AddObject(RenderableObject* object);
 };
 #endif
