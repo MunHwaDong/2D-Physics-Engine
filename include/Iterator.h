@@ -11,6 +11,30 @@ private:
     QuadTNode* currentNode;
     int dataIdx;
 
+    void Traversal(QuadTNode* node)
+    {
+        if (!node) return;
+
+        if (node->GetAreaPtr(AREA::SE)->GetDataCount() != 0)
+        {
+            Traversal(node->GetAreaPtr(AREA::SE));
+        }
+        if (node->GetAreaPtr(AREA::SW)->GetDataCount() != 0)
+        {
+            Traversal(node->GetAreaPtr(AREA::SW));
+        }
+        if (node->GetAreaPtr(AREA::NE)->GetDataCount() != 0)
+        {
+            Traversal(node->GetAreaPtr(AREA::NE));
+        }
+        if (node->GetAreaPtr(AREA::NW)->GetDataCount() != 0)
+        {
+            Traversal(node->GetAreaPtr(AREA::NW));
+        }
+
+        nodePtrs.push(node);
+    }
+
 public:
     Iterator() : nodePtrs(), currentNode(nullptr), dataIdx(0)
     {};
@@ -30,30 +54,6 @@ public:
 
     ~Iterator()
     {};
-
-    void Traversal(QuadTNode* node)
-    {
-        if(!node) return;
-
-        if(node->GetAreaPtr(AREA::SE)->GetDataCount() != 0)
-        {
-            Traversal(node->GetAreaPtr(AREA::SE));
-        }
-        if(node->GetAreaPtr(AREA::SW)->GetDataCount() != 0)
-        {
-            Traversal(node->GetAreaPtr(AREA::SW));
-        }
-        if(node->GetAreaPtr(AREA::NE)->GetDataCount() != 0)
-        {
-            Traversal(node->GetAreaPtr(AREA::NE));
-        }
-        if(node->GetAreaPtr(AREA::NW)->GetDataCount() != 0)
-        {
-            Traversal(node->GetAreaPtr(AREA::NW));
-        }
-
-        nodePtrs.push(node);
-    }
 
     Iterator& operator++()
     {
@@ -83,6 +83,12 @@ public:
     IQTData* operator*() const
     {
         return currentNode->GetData(dataIdx);
+    }
+
+    //QT의 삭제 연산을 구현하기 위한, 임시 연산자
+    QuadTNode* GetNode()
+    {
+        return currentNode;
     }
 
     bool operator==(const Iterator& operand) const

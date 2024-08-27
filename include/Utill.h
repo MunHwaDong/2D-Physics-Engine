@@ -90,6 +90,11 @@ public:
             vector4f(0.0f, 0.0f, 0.0f, 1.0f)
         );
     }
+
+    static const Matrix4f GetModelMatrix(const vector3f& transVec, const vector3f& scaleVec, float theta = 0)
+    {
+        return Utill::GetScaleMatrix4f(scaleVec) * Utill::GetRotateMatrix4f(theta, vector3f(0.0f, 0.0f, 1.0f)) * Utill::GetTranslateMatrix4f(transVec);
+    }
 };
 
 #endif

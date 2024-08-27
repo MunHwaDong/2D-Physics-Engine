@@ -38,6 +38,6 @@ public:
 	IQTData* GetData(const int idx) const;
 	int GetDataCount() const;
 	void PushData(IQTData* data) const;
-
+	void DeleteData(IQTData* data);
 };
 #endif

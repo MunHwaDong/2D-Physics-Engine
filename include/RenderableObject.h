@@ -28,6 +28,9 @@ public:
 
     Shape* shape;
 
+    //for test
+    std::string name;
+
     RenderableObject() : pos(), vel(), accel(), theta(), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(0), isUseGravity(true), shape()
     {};
 

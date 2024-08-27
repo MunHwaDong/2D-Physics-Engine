@@ -25,11 +25,8 @@ public:
 		normVec = new vector3f[numVertices];
 	};
 
-	Shape(const int numVertices, const float distance, vector3f* vertices, vector3f* normVec) : numVertices(numVertices), distance(distance), vertices(vertices), normVec(normVec)
-	{
-		vertices = new vector3f[numVertices];
-		normVec = new vector3f[numVertices];
-	};
+	Shape(const int numVertices, vector3f* vertices, vector3f* normVec) : numVertices(numVertices), distance(0), vertices(vertices), normVec(normVec)
+	{};
 
 	~Shape()
 	{

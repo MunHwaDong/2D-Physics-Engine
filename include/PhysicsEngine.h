@@ -25,7 +25,11 @@ private:
 
     void GenerateForce(const float deltaTime);
     void RigidbodyUpdate(const float deltaTime);
+    
     void DetectCollision();
+    void BoardPhase(std::vector<std::unordered_set<IQTData*>>& collisionableSetFamily) const;
+    void NarrowPhase(std::vector<std::unordered_set<IQTData*>>& collisionableSetFamily) const;
+
     void ResolutionCollision();
 
 public:

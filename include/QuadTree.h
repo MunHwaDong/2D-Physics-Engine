@@ -12,9 +12,11 @@ private:
 	QuadTNode* headptr;
 	int maxDepth;
 
-	//Public Insert 도우미 함수들
+	//Insert 도우미 함수들
 	void InsertRecursive(QuadTNode& node, IQTData* data);
-	bool CheckAABB(const QuadTNode& node, const vector3f& position);
+	bool CheckAABB(const QuadTNode& node, const vector3f& position) const;
+
+	void DeleteRecursive(QuadTNode& node, IQTData* data);
 
 	//초기화에도 사용함으로 static 선언함
 	static void DivideSubArea(QuadTNode& node);
@@ -32,10 +34,10 @@ public:
 	void Insert(IQTData* data);
 
 	//Query 관련 함수들
-	std::unordered_set<IQTData*> Query(vector3f& min, vector3f& max);
-	void QueryRecusive(QuadTNode* node, vector3f& min, vector3f& max, std::unordered_set<IQTData*>& foundObj) const;
+	std::unordered_set<IQTData*> Query(vector3f& min, vector3f& max) const;
+	void QueryRecusive(const QuadTNode& node, const vector3f& min, const vector3f& max, std::unordered_set<IQTData*>& foundObj) const;
 
-	void DeleteData(IQTData* data);
+	void Delete(IQTData* data);
 
 	~QuadTree();
 };
