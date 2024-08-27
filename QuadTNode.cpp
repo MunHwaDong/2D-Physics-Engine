@@ -37,3 +37,15 @@ void QuadTNode::PushData(IQTData* data) const
 {
 	const_cast<QuadTNode*>(this)->datas.push_back(data);
 }
+
+void QuadTNode::DeleteData(IQTData* data)
+{
+	for (auto iter = this->datas.begin(); iter != this->datas.end(); ++iter)
+	{
+		if (*iter == data)
+		{
+			this->datas.erase(iter);
+			break;
+		}
+	}
+}

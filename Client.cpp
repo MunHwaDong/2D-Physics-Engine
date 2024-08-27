@@ -147,18 +147,13 @@ void RenderObject(unsigned int VAO, size_t vertexCount)
     glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 }
 
-void SetTransform(const vector3f& transVec, const vector3f& scaleVec, float theta = 0)
+void SetPVMatrix()
 {
-    //projection = Utill::GetIdentityMatrix4f();
-    //view = Utill::GetIdentityMatrix4f();
-
     view = glm::mat4(1.0f);
     projection = glm::mat4(1.0f);
 
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -200.0f));
     projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 500.0f);
-
-    model = Utill::GetScaleMatrix4f(scaleVec) * Utill::GetRotateMatrix4f(theta, vector3f(0.0f, 0.0f, 1.0f)) * Utill::GetTranslateMatrix4f(transVec);
 
     PV = projection * view;
 }
@@ -223,47 +218,37 @@ int main()
     PhysicsEngine phyEngine;
     //////////////////////////////////////////////////////////////////////////////////////////////////
     //Data 
-    //vector3f initPos(0, -0.5f, 0);
-    //Shape* shape = new Shape(3, 0.2f);
-
-    //RenderableObject* obj1 = new RenderableObject(initPos, 15.0f, shape);
-    //phyEngine.AddObject(obj1);
-
-    //vector3f initPos1(0, 0.5f, 0);
-    //Shape* shape1 = new Shape(3, 0.35f);
-
-    //RenderableObject* obj2 = new RenderableObject(initPos1, 5.0f, shape1);
-
-    //phyEngine.AddObject(obj2);
-
     vector3f obj1InitPos(0, -0.5f, 0);
     Shape* shape1 = new Shape(3, 0.2f);
-    RenderableObject* obj1 = new RenderableObject(15.0f, shape1);
+    RenderableObject* obj1 = new RenderableObject(35.0f, shape1);
 
-    SetTransform(obj1InitPos, vector3f(100, 100, 0), 45.0f);
-    model.Transform(obj1->pos);
-    obj1->shape->distance = 20;
-    for (int i = 0; i < 3; ++i)
-    {
-        model.Transform(obj1->shape->vertices[i]);
-    }
-
+    obj1->name = "obj1";
+   
     vector3f obj2InitPos(0, 0.5f, 0);
     Shape* shape2 = new Shape(3, 0.2f);
     RenderableObject* obj2 = new RenderableObject(5.0f, shape2);
 
-    SetTransform(obj2InitPos, vector3f(100, 100, 0), 0);
+    obj2->name = "obbbbjjjj2";
+
+    SetPVMatrix();
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    Matrix4f model = Utill::GetModelMatrix(obj1InitPos, vector3f(100.0f, 100.0f, 0), 0);
+
+    model.Transform(obj1->pos);
+    std::transform(obj1->shape->vertices,
+                   obj1->shape->vertices + 3,
+                   obj1->shape->vertices,
+                   [&model](vector3f vertex) { model.Transform(vertex); });
+
+    Matrix4f model = Utill::GetModelMatrix(obj2InitPos, vector3f(100.0f, 100.0f, 0), 0);
     model.Transform(obj2->pos);
-    obj2->shape->distance = 20;
-    for (int i = 0; i < 3; ++i)
-    {
-        model.Transform(obj2->shape->vertices[i]);
-    }
+    std::transform(obj2->shape->vertices,
+        obj2->shape->vertices + 3,
+        obj2->shape->vertices,
+        [&model](vector3f vertex) { model.Transform(vertex); });
 
     phyEngine.AddObject(obj1);
     phyEngine.AddObject(obj2);
-
-    glUniformMatrix4fv(locPV, 1, GL_FALSE, glm::value_ptr(PV));
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
     // OpenGL

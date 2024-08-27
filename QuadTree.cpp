@@ -10,21 +10,50 @@ Iterator QuadTree::end() const
     return Iterator();
 }
 
-std::unordered_set<IQTData*> QuadTree::Query(vector3f& min, vector3f& max)
+std::unordered_set<IQTData*> QuadTree::Query(vector3f& min, vector3f& max) const
 {
     std::unordered_set<IQTData*> foundObj;
 
     if (headptr)
     {
-        QueryRecusive(headptr, min, max, foundObj);
+        QueryRecusive(*headptr, min, max, foundObj);
     }
 
     return foundObj;
 }
 
-void QuadTree::QueryRecusive(QuadTNode* node, vector3f& min, vector3f& max, std::unordered_set<IQTData*>& foundObj) const
+void QuadTree::QueryRecusive(const QuadTNode& node, const vector3f& minCoordi, const vector3f& maxCoordi, std::unordered_set<IQTData*>& foundObjects) const
 {
+    if (node.GetNodeDepth() >= maxDepth || node.GetDataCount() <= 0) return;
 
+    // 노드의 영역이 검색 영역과 교차하지 않으면 종료
+    if (node.maxCoordi.x < minCoordi.x || node.minCoordi.x > maxCoordi.x || node.maxCoordi.y < minCoordi.y || node.minCoordi.y > maxCoordi.y)
+    {
+        return;
+    }
+
+    // 노드의 객체들을 결과에 추가
+    for (int i = 0; i < node.GetDataCount(); ++i)
+    {
+        IQTData* data = node.GetData(i);
+
+        const vector3f* dataPos = data->GetPosition();
+
+        for (int j = 0; j < data->GetDataCount(); ++j)
+        {
+            if (dataPos[j].x >= minCoordi.x && dataPos[j].x <= maxCoordi.x && dataPos[j].y >= minCoordi.y && dataPos[j].y <= maxCoordi.y)
+            {
+                foundObjects.insert(data);
+                break;
+            }
+        }
+    }
+
+    // 하위 노드를 재귀적으로 검색
+    if (node.GetAreaPtr(NW)) QueryRecusive(*node.GetAreaPtr(NW), minCoordi, maxCoordi, foundObjects);
+    if (node.GetAreaPtr(NE)) QueryRecusive(*node.GetAreaPtr(NE), minCoordi, maxCoordi, foundObjects);
+    if (node.GetAreaPtr(SW)) QueryRecusive(*node.GetAreaPtr(SW), minCoordi, maxCoordi, foundObjects);
+    if (node.GetAreaPtr(SE)) QueryRecusive(*node.GetAreaPtr(SE), minCoordi, maxCoordi, foundObjects);
 }
 
 void QuadTree::Insert(IQTData* data)
@@ -74,7 +103,7 @@ void QuadTree::InsertRecursive(QuadTNode& node, IQTData* data)
     return;
 }
 
-bool QuadTree::CheckAABB(const QuadTNode& node, const vector3f& position)
+bool QuadTree::CheckAABB(const QuadTNode& node, const vector3f& position) const
 {
     if (node.minCoordi.x < position.x && node.minCoordi.y < position.y &&
         node.maxCoordi.x > position.x && node.maxCoordi.y > position.y)
@@ -107,7 +136,21 @@ void QuadTree::DivideSubArea(QuadTNode& node)
         node.GetNodeDepth() + 1));
 }
 
-void QuadTree::DeleteData(IQTData* data)
+void QuadTree::Delete(IQTData* data)
+{
+    for (auto iter = this->begin(); iter != this->end(); ++iter)
+    {
+        if (data == *iter)
+        {
+            QuadTNode* node = iter.GetNode();
+
+            node->DeleteData(data);
+            break;
+        }
+    }
+}
+
+void QuadTree::DeleteRecursive(QuadTNode& node, IQTData* data)
 {
 
 }
