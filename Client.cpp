@@ -152,8 +152,8 @@ void SetPVMatrix()
     view = glm::mat4(1.0f);
     projection = glm::mat4(1.0f);
 
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -200.0f));
-    projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 500.0f);
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -2000.0f));
+    projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 5000.0f);
 
     PV = projection * view;
 }
@@ -218,34 +218,39 @@ int main()
     PhysicsEngine phyEngine;
     //////////////////////////////////////////////////////////////////////////////////////////////////
     //Data 
-    vector3f obj1InitPos(0, -0.5f, 0);
+    vector3f obj1InitPos(0.25f, -0.5f, 0);
     Shape* shape1 = new Shape(3, 0.2f);
     RenderableObject* obj1 = new RenderableObject(35.0f, shape1);
-
+        
     obj1->name = "obj1";
    
     vector3f obj2InitPos(0, 0.5f, 0);
     Shape* shape2 = new Shape(3, 0.2f);
-    RenderableObject* obj2 = new RenderableObject(5.0f, shape2);
+    RenderableObject* obj2 = new RenderableObject(1.0f, shape2);
 
     obj2->name = "obbbbjjjj2";
 
     SetPVMatrix();
     //////////////////////////////////////////////////////////////////////////////////////////////////
-    Matrix4f model = Utill::GetModelMatrix(obj1InitPos, vector3f(100.0f, 100.0f, 0), 0);
+    Matrix4f model = Utill::GetModelMatrix(obj1InitPos, vector3f(Utill::WORLD_MAX, Utill::WORLD_MAX, 0), 0);
 
-    model.Transform(obj1->pos);
     std::transform(obj1->shape->vertices,
                    obj1->shape->vertices + 3,
                    obj1->shape->vertices,
-                   [&model](vector3f vertex) { model.Transform(vertex); });
+                   [&model](vector3f vertex) { return model.Transform(vertex); });
 
-    Matrix4f model = Utill::GetModelMatrix(obj2InitPos, vector3f(100.0f, 100.0f, 0), 0);
-    model.Transform(obj2->pos);
+    obj1->objMinAABB = model.Transform(obj1->objMinAABB);
+    obj1->objMaxAABB = model.Transform(obj1->objMaxAABB);
+
+    model = Utill::GetModelMatrix(obj2InitPos, vector3f(Utill::WORLD_MAX, Utill::WORLD_MAX, 0), 0);
+  
     std::transform(obj2->shape->vertices,
         obj2->shape->vertices + 3,
         obj2->shape->vertices,
-        [&model](vector3f vertex) { model.Transform(vertex); });
+        [&model](vector3f vertex) { return model.Transform(vertex); });
+
+    obj2->objMinAABB = model.Transform(obj2->objMinAABB);
+    obj2->objMaxAABB = model.Transform(obj2->objMaxAABB);
 
     phyEngine.AddObject(obj1);
     phyEngine.AddObject(obj2);

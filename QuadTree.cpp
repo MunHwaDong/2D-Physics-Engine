@@ -138,21 +138,40 @@ void QuadTree::DivideSubArea(QuadTNode& node)
 
 void QuadTree::Delete(IQTData* data)
 {
-    for (auto iter = this->begin(); iter != this->end(); ++iter)
-    {
-        if (data == *iter)
-        {
-            QuadTNode* node = iter.GetNode();
-
-            node->DeleteData(data);
-            break;
-        }
-    }
+    DeleteRecursive(*headptr, data);
 }
 
 void QuadTree::DeleteRecursive(QuadTNode& node, IQTData* data)
 {
+    if (node.GetNodeDepth() < this->maxDepth)
+    {
+        const vector3f* datasPos = data->GetPosition();
+        int counter = 0;
 
+        for (int area = 0; area < 4; ++area)
+        {
+            for (int idx = 0; idx < data->GetDataCount(); ++idx)
+            {
+                if (CheckAABB(*node.GetAreaPtr(static_cast<AREA>(area)), datasPos[idx]))
+                {
+                    ++counter;
+                }
+            }
+            if (counter == data->GetDataCount())
+            {
+                DeleteRecursive(*node.GetAreaPtr(static_cast<AREA>(area)), data);
+                break;
+            }
+            else
+            {
+                counter = 0;
+            }
+        }
+    }
+
+    //Root에 존재한다 판단
+    node.DeleteData(data);
+    return;
 }
 
 QuadTree::~QuadTree()
