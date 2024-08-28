@@ -55,7 +55,7 @@ public:
     };
 
     RenderableObject(vector3f& pos, float mass, Shape* shape)
-        : pos(pos), vel(), accel(), theta(theta), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(1 / mass), isUseGravity(true), shape(shape)
+        : pos(pos), vel(), accel(), theta(), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(1 / mass), isUseGravity(true), shape(shape)
     {
         UpdateVertices();
         UpdateNormVectors();
@@ -63,7 +63,7 @@ public:
     };
 
     RenderableObject(vector3f& pos, vector3f& theta, float mass, bool isUseGravity, Shape* shape)
-        : pos(pos), vel(), accel(), theta(theta), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(1 / mass), isUseGravity(isUseGravity), shape(shape)
+        : pos(pos), vel(), accel(), theta(), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(1 / mass), isUseGravity(isUseGravity), shape(shape)
     {
         UpdateVertices();
         UpdateNormVectors();

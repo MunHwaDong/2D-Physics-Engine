@@ -65,16 +65,14 @@ public:
 
     //For Local to World Coordinate
     //In : 3D-Vec
-    void Transform(vector3f& operand) const
+    const vector3f Transform(const vector3f& operand) const
     {
         float x = this->mat4[0][0] * operand.x + this->mat4[0][1] * operand.y + this->mat4[0][2] * operand.z + this->mat4[0][3];
         float y = this->mat4[1][0] * operand.x + this->mat4[1][1] * operand.y + this->mat4[1][2] * operand.z + this->mat4[1][3];
         float z = this->mat4[2][0] * operand.x + this->mat4[2][1] * operand.y + this->mat4[2][2] * operand.z + this->mat4[2][3];
         float w = this->mat4[3][0] * operand.x + this->mat4[3][1] * operand.y + this->mat4[3][2] * operand.z + this->mat4[3][3];
 
-        operand.x = x / w;
-        operand.y = y / w;
-        operand.z = z / w;
+        return vector3f(x / w, y / w, z / w);
     }
 
     //Matrix Multiplication

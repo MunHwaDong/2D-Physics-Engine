@@ -6,6 +6,7 @@
 
 #include "vector3f.h"
 #include "IQTData.h"
+#include "Utill.h"
 
 enum AREA { NW, NE, SW, SE };
 
@@ -21,7 +22,8 @@ public:
 	vector3f minCoordi;
 	vector3f maxCoordi;
 
-	QuadTNode() : datas(), areaPtrs(4, nullptr), depth(0), minCoordi(vector3f(-100, -100, 0)), maxCoordi(vector3f(100, 100, 0))
+	QuadTNode() : datas(), areaPtrs(4, nullptr), depth(0),
+		minCoordi(vector3f(Utill::WORLD_MIN, Utill::WORLD_MIN, 0)), maxCoordi(vector3f(Utill::WORLD_MAX, Utill::WORLD_MAX, 0))
 	{};
 	QuadTNode(vector3f minCoordi, vector3f maxCoordi) : datas(), areaPtrs(4, nullptr), depth(0), minCoordi(minCoordi), maxCoordi(maxCoordi)
 	{};

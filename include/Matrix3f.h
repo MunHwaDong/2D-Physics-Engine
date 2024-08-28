@@ -62,14 +62,13 @@ public:
     }
 
     //For Local to World Coordinate
-    void Transform(vector3f& operand) const
+    const vector3f Transform(const vector3f& operand) const
     {
         float x = this->mat3[0][0] * operand.x + this->mat3[0][1] * operand.y + this->mat3[0][2];
         float y = this->mat3[1][0] * operand.x + this->mat3[1][1] * operand.y + this->mat3[1][2];
         float w = this->mat3[2][0] * operand.x + this->mat3[2][1] * operand.y + this->mat3[2][2];
 
-        operand.x = x / w;
-        operand.y = y / w;
+        return vector3f(x / w, y / w, 0);
     }
 
     //Matrix Multiplication

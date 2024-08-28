@@ -1,7 +1,6 @@
 #ifndef UTILL_H
 #define UTILL_H
 
-#include "vector3f.h"
 #include "Matrix3f.h"
 #include "Matrix4f.h"
 
@@ -12,6 +11,9 @@ private:
     Utill() {};
 
 public:
+    enum { WORLD_MIN = -1000,
+           WORLD_MAX = 1000};
+
     static const vector3f GetNormVector(const vector3f& operand1, const vector3f& operand2, bool isCCW = true)
     {
         if (isCCW)
@@ -38,12 +40,13 @@ public:
         return Matrix4f(
             vector4f(1.0f, 0.0f, 0.0f, translate.x),
             vector4f(0.0f, 1.0f, 0.0f, translate.y),
-            vector4f(0.0f, 0.0f, 1.0f, translate.y),
+            vector4f(0.0f, 0.0f, 1.0f, translate.z),
             vector4f(0.0f, 0.0f, 0.0f, 1.0f)
         );
     }
 
-    static const Matrix4f GetRotateMatrix4f(const float theta, const vector3f& axis) {
+    static const Matrix4f GetRotateMatrix4f(const float theta, const vector3f& axis)
+    {
         float c = cos(theta);
         float s = sin(theta);
         float t = 1.0f - c;

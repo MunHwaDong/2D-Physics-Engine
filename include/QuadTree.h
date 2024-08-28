@@ -12,10 +12,6 @@ private:
 	QuadTNode* headptr;
 	int maxDepth;
 
-	//Insert 도우미 함수들
-	void InsertRecursive(QuadTNode& node, IQTData* data);
-	bool CheckAABB(const QuadTNode& node, const vector3f& position) const;
-
 	void DeleteRecursive(QuadTNode& node, IQTData* data);
 
 	//초기화에도 사용함으로 static 선언함
@@ -32,6 +28,10 @@ public:
 	Iterator end() const;
 
 	void Insert(IQTData* data);
+
+	//Insert 도우미 함수들
+	void InsertRecursive(QuadTNode& node, IQTData* data);
+	bool CheckAABB(const QuadTNode& node, const vector3f& position) const;
 
 	//Query 관련 함수들
 	std::unordered_set<IQTData*> Query(vector3f& min, vector3f& max) const;
