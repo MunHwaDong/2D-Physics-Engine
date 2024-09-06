@@ -9,8 +9,8 @@
 6. Matrix3f 클래스를 구현
 
 #구현해야할 것
-1. Matrix3f를 이용해, Model Matrix를 구현하여 Client에서 입력되는 vertex 좌표값들을 world 좌표계로 변환하여 QuadTree에 삽입하는 기능 (구현중)
+1. Matrix3f를 이용해, Model Matrix를 구현하여 Client에서 입력되는 vertex 좌표값들을 world 좌표계로 변환하여 QuadTree에 삽입하는 기능
 2. World 좌표 공간의 QuadTree를 이용하여 물체 충돌의 광역 검사를 수행하는 기능
-3. 광역 검사에서 검출된 객체들의 실제 충돌이 일어났는지 지역 검사를 하는 기능 (point-point, point-edge...등등 상황에 따라 다른 알고리즘을 사용해야 하니 Strategy Pattern을 적용할 수 있는지 고려해본다.)
+3. 광역 검사에서 검출된 객체들의 실제 충돌이 일어났는지 지역 검사를 하는 기능 (point-point, point-edge...등등 상황에 따라 다른 알고리즘을 사용해야 하니 Strategy Pattern을 적용할 수 있는지 고려해본다.) (구현중)
 4. 실제 충돌이 일어났을시 충돌에 대한 벡터 방정식의 공부와 이를 실제 코드로 구현.
 5. Client에서 객체 생성에 대한 기능을, Factory Pattern을 적용하여 분리할 수 있는지 고려한다.
