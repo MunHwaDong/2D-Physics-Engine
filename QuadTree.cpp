@@ -89,7 +89,7 @@ void QuadTree::InsertRecursive(QuadTNode& node, IQTData* data)
             {
                 DivideSubArea(*node.GetAreaPtr(static_cast<AREA>(area)));
                 InsertRecursive(*node.GetAreaPtr(static_cast<AREA>(area)), data);
-                break;
+                return;
             }
             else
             {
@@ -152,7 +152,7 @@ void QuadTree::DeleteRecursive(QuadTNode& node, IQTData* data)
         {
             for (int idx = 0; idx < data->GetDataCount(); ++idx)
             {
-                if (CheckAABB(*node.GetAreaPtr(static_cast<AREA>(area)), datasPos[idx]))
+                if (node.GetAreaPtr(static_cast<AREA>(area)) && CheckAABB(*node.GetAreaPtr(static_cast<AREA>(area)), datasPos[idx]))
                 {
                     ++counter;
                 }
