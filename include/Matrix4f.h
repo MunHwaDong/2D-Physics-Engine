@@ -14,7 +14,12 @@ public:
     mutable vector4f mat4[4];
 
     Matrix4f()
-    {};
+    {
+        mat4[0] = vector4f(0);
+        mat4[1] = vector4f(0);
+        mat4[2] = vector4f(0);
+        mat4[3] = vector4f(0);
+    };
 
     Matrix4f(const vector4f& row1, const vector4f& row2, const vector4f& row3, const vector4f& row4)
     {

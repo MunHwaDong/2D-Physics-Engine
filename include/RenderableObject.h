@@ -54,8 +54,24 @@ public:
         UpdateObjAABB();
     };
 
+    RenderableObject(float mass, bool isUseGravity, Shape* shape)
+        : pos(), vel(), accel(), theta(), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(1 / mass), isUseGravity(isUseGravity), shape(shape)
+    {
+        UpdateVertices();
+        UpdateNormVectors();
+        UpdateObjAABB();
+    };
+
     RenderableObject(vector3f& pos, float mass, Shape* shape)
         : pos(pos), vel(), accel(), theta(), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(1 / mass), isUseGravity(true), shape(shape)
+    {
+        UpdateVertices();
+        UpdateNormVectors();
+        UpdateObjAABB();
+    };
+
+    RenderableObject(vector3f& pos, float mass, bool isUseGravity, Shape* shape)
+        : pos(pos), vel(), accel(), theta(), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(1 / mass), isUseGravity(isUseGravity), shape(shape)
     {
         UpdateVertices();
         UpdateNormVectors();
@@ -71,7 +87,9 @@ public:
     };
 
     ~RenderableObject()
-    {};
+    {
+        delete shape;
+    };
 
     void UpdateVertices();
     void UpdateNormVectors();

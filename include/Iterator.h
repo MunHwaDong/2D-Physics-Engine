@@ -32,7 +32,8 @@ private:
             Traversal(node->GetAreaPtr(AREA::NW));
         }
 
-        nodePtrs.push(node);
+        if(node->GetDataCount() != 0)
+            nodePtrs.push(node);
     }
 
 public:
@@ -85,12 +86,6 @@ public:
         return currentNode->GetData(dataIdx);
     }
 
-    //QT의 삭제 연산을 구현하기 위한, 임시 연산자
-    QuadTNode* GetNode()
-    {
-        return currentNode;
-    }
-
     bool operator==(const Iterator& operand) const
     {
         return currentNode == operand.currentNode;
@@ -99,6 +94,12 @@ public:
     bool operator!=(const Iterator& operand) const
     {
         return currentNode != operand.currentNode;
+    }
+
+    //QT의 삭제 연산을 구현하기 위한, 임시 연산자
+    QuadTNode* GetNode()
+    {
+        return currentNode;
     }
 };
 

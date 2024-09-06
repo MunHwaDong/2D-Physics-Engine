@@ -77,7 +77,7 @@ public:
 	//To extension for Matrix
 	float& operator[](const int idx)
 	{
-		if (idx >= 3) std::out_of_range("Bad Input");
+		if (idx >= 3) throw std::out_of_range("Bad Input");
 
 		if (idx == 0)
 			return this->x;

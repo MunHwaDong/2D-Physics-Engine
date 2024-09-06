@@ -11,8 +11,8 @@ private:
     Utill() {};
 
 public:
-    enum { WORLD_MIN = -1000,
-           WORLD_MAX = 1000};
+    enum { WORLD_MIN = -10000,
+           WORLD_MAX = 10000};
 
     static const vector3f GetNormVector(const vector3f& operand1, const vector3f& operand2, bool isCCW = true)
     {
@@ -65,6 +65,16 @@ public:
         );
     }
 
+    static const Matrix4f GetZRotateMatrix4f(const float theta)
+    {
+        return Matrix4f(
+            vector4f(cos(theta), -sin(theta), 0.0f, 0.0f),
+            vector4f(sin(theta), cos(theta), 0.0f, 0.0f),
+            vector4f(0.0f, 0.0f, 1.0f, 0.0f),
+            vector4f(0.0f, 0.0f, 0.0f, 1.0f)
+        );
+    }
+
     static const Matrix4f GetScaleMatrix4f(const vector3f& scale)
     {
         return Matrix4f(
@@ -96,7 +106,8 @@ public:
 
     static const Matrix4f GetModelMatrix(const vector3f& transVec, const vector3f& scaleVec, float theta = 0)
     {
-        return Utill::GetScaleMatrix4f(scaleVec) * Utill::GetRotateMatrix4f(theta, vector3f(0.0f, 0.0f, 1.0f)) * Utill::GetTranslateMatrix4f(transVec);
+        //return Utill::GetScaleMatrix4f(scaleVec) * Utill::GetRotateMatrix4f(theta, vector3f(0.0f, 0.0f, 1.0f)) * Utill::GetTranslateMatrix4f(transVec);
+        return Utill::GetTranslateMatrix4f(transVec) * Utill::GetRotateMatrix4f(theta, vector3f(0.0f, 0.0f, 1.0f)) * Utill::GetScaleMatrix4f(scaleVec);
     }
 };
 

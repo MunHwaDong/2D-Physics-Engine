@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <utility>
 #include "RenderableObject.h"
 #include "QuadTree.h"
 
@@ -20,20 +21,21 @@ class PhysicsEngine
 {
 private:
     const vector3f C_gravitycoeff;
+    
     QuadTree objects;
 
     void GenerateForce(const float deltaTime);
     void RigidbodyUpdate();
     
-    void DetectCollision();
-    void BoardPhase(std::vector<std::unordered_set<IQTData*>>& collisionableSetFamily) const;
-    void NarrowPhase(std::vector<std::unordered_set<IQTData*>>& collisionableSetFamily) const;
+    void DetectCollision() const;
+    void BoardPhase() const;
+    void NarrowPhase(std::unordered_set<IQTData*> collisionableSet) const;
 
     void ResolutionCollision();
 
 public:
     //Constructor
-    PhysicsEngine() : C_gravitycoeff(0.0f, -2.8f, 0.0f), objects()
+    PhysicsEngine() : C_gravitycoeff(0.0f, -9.8f, 0.0f), objects()
     {};
 
     //Deconstructor
