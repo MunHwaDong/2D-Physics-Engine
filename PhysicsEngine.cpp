@@ -1,42 +1,24 @@
 #include "PhysicsEngine.h"
 
-void PhysicsEngine::GenerateForce(const float deltaTime)
+void PhysicsEngine::GenerateForce(vector3f Force, const float deltaTime)
 {
 	for (auto iter = objects.begin(); iter != objects.end(); ++iter)
 	{
 		RenderableObject* obj = dynamic_cast<RenderableObject*>(*iter);
 
-		// std::cout << obj->name << std::endl;
-		// for (int i = 0; i < 3; ++i)
-		// {
-		// 	std::cout << obj->shape->vertices[i].x << ", " << obj->shape->vertices[i].y << std::endl;
-		// }
-		 
-		//std::cout << obj->name << " : " << obj->pos.x << " " << obj->pos.y << std::endl;
+		if (!obj->isUseGravity && Force == C_gravitycoeff) continue;
 
-		if (!obj->isUseGravity) continue;
-
-		obj->vel += (C_gravitycoeff * obj->inverseMass) * deltaTime;
-		obj->pos += obj->vel * deltaTime;
-
-		obj->angularVel += (C_gravitycoeff * obj->inverseMass) * deltaTime;
-		obj->theta += obj->angularVel * deltaTime;
-
-		//std::cout << obj->name << " : " << obj->pos.x << " " << obj->pos.y << std::endl;
-
-		//std::cout << beforevel.x - obj->vel.x << " " << beforevel.y - obj->vel.y << std::endl;
-		//beforevel = obj->vel;
-
-		//std::cout << obj->name << std::endl;
-		//for (int i = 0; i < 3; ++i)
-		//{
-		//	std::cout << obj->shape->vertices[i].x << ", " << obj->shape->vertices[i].y << std::endl;
-		//}
-
-		//std::cout << obj->name << " 법선 : " << obj->shape->normVec[0].x << " " << obj->shape->normVec[0].y << std::endl;
-		//std::cout << obj->name << " 법선 : " << obj->shape->normVec[1].x << " " << obj->shape->normVec[1].y << std::endl;
-		//std::cout << obj->name << " 법선 : " << obj->shape->normVec[2].x << " " << obj->shape->normVec[2].y << std::endl;
+		Integrator(obj, C_gravitycoeff, deltaTime);
 	}
+}
+
+void PhysicsEngine::Integrator(RenderableObject* obj, vector3f Force, const float deltaTime)
+{
+	obj->vel += (Force * obj->inverseMass) * deltaTime;
+	obj->pos += obj->vel * deltaTime;
+
+	obj->angularVel += (Force * obj->inverseMass) * deltaTime;
+	obj->theta += obj->angularVel * deltaTime;
 }
 
 void PhysicsEngine::RigidbodyUpdate()
@@ -112,13 +94,6 @@ void PhysicsEngine::NarrowPhase(std::vector<IQTData*>& collisionableSet)
 		!!!. RenderableObject->shape에 월드 좌표로 변환되어 있는 정점 위치들이 존재함.
 		!!!!. 도형의 각 Normal Vector들에 대해서, 도형의 모든 정점들을 투영해서 검사해봐야함.
 				(A 도형의 Normal들과 B 도형의 Normal 모두에 대해서 검사해야한다.)
-
-
-		1. 처음 다각형의 법선 정보를 가져온다.
-		2. 해당 법선에 두 도형의 모든 면을 투영한다.
-		3. 투영 시, 각 도형들의 면들에 대해 최대 값과 최소 값을 저장한다.
-		4. 두 도형의 범위가 겹친다면, (1)로 돌아간다.
-		5. 두 도형의 범위가 겹치지 않는다면, 두 도형은 충돌하지 않은 것이므로 다음 도형을 검사한다.
 	*/
 	
 	const int collisionableNum = collisionableSet.size();
@@ -130,75 +105,113 @@ void PhysicsEngine::NarrowPhase(std::vector<IQTData*>& collisionableSet)
 		for(int targetObj = objNum + 1; targetObj < collisionableNum; ++targetObj)
 		{
 			RenderableObject* obj2 = dynamic_cast<RenderableObject*>(collisionableSet[targetObj]);
-			std::pair<vector3f, vector3f> collisionInfo;
+			CollisionInfo collisionInfo;
 
 			if(IsOverlap(obj1, obj2, collisionInfo))
 			{
 				std::cout << obj1->name << " / " << obj2->name << " is Collision!" << std::endl;
-				ResolutionCollision(obj1, obj2);
+				ResolutionCollision(obj1, obj2, collisionInfo);
 			}
 		}
 	}
 
 }
 
-bool PhysicsEngine::IsOverlap(const RenderableObject* o1, const RenderableObject* o2, std::pair<vector3f, vector3f>& collisionInfo) const
+bool PhysicsEngine::IsOverlap(const RenderableObject* o1, const RenderableObject* o2, CollisionInfo& collisionInfo) const
 {
-	const auto o1Edges = o1->GetEdge();
-	const auto o2Edges = o2->GetEdge();
+	/*
+		1. o2의 한 정점을 선택한다.
+		2. o1의 한 법선을 선택한다.
+		3. o1의 한 정점들에 대해 (1)에서 선택한 o2의 한 정점과 뺄셈을 진행하여 나온 각 벡터들을 (2)에서 선택한 법선과 내적한다.
+		4. 이 때 SAT에 의해, 하나라도 내적 결과가 양수라면 해당 방향에서 충돌하지 않은 것이니 break하여 다음 법선을 검사한다.
+		5. 양수가 아니라면, 최소값과 비교하여 최소값을 업데이트하고, 어떤 정점에서 최솟값이였는지 저장한다.
 
+		(1) ~ (5)를 o2에도 적용하여, 두 최솟값이 모두 무한이 아니면 충돌이 발생한 것.
+	*/
 	double o1Min = Utill::INF;
-	double o1Max = (-1) * Utill::INF;
 	double o2Min = Utill::INF;
-	double o2Max = (-1) * Utill::INF;
 
-	for(int normNum = 0; normNum < o1->shape->numVertices; ++normNum)
+	vector3f o1MinVer;
+	vector3f o2MinVer;
+
+	for(int o2VertexNum = 0, normNum = 0; o2VertexNum < o2->shape->numVertices; ++o2VertexNum)
 	{
-		float proj = o1->shape->normVec[normNum].DotProduct(o1Edges[normNum]);
+		double proj = 0.0;
 
-		if(o1Min > proj) o1Min = proj;
-		if(o1Max < proj) o1Max = proj;
+		for(int o1VertexNum = 0; o1VertexNum < o1->shape->numVertices; ++o1VertexNum)
+		{
+			proj = o1->shape->normVec[normNum].DotProduct(
+				(o1->shape->vertices[o1VertexNum] - o2->shape->vertices[o2VertexNum]));
 
-		proj = o1->shape->normVec[normNum].DotProduct(o2Edges[normNum]);
+			if(proj > 0) break;
+			if(o1Min > proj)
+			{
+				o1Min = proj;
+				o1MinVer = o1->shape->normVec[normNum];
+			}
+		}
 
-		if(o2Min > proj) o2Min = proj;
-		if(o2Max < proj) o2Max = proj;
+		++normNum;
 	}
 
-	if(o1Min > o2Max || o1Max < o2Min) return false;
-
-	//obj2의 법선 벡터들에도 투영해서 검사해야한다.
-	o1Min = Utill::INF;
-	o1Max = (-1) * Utill::INF;
-	o2Min = Utill::INF;
-	o2Max = (-1) * Utill::INF;
-
-	for(int normNum = 0; normNum < o2->shape->numVertices; ++normNum)
+	for(int o1VertexNum = 0, normNum = 0; o1VertexNum < o1->shape->numVertices; ++o1VertexNum)
 	{
-		float proj = o2->shape->normVec[normNum].DotProduct(o1Edges[normNum]);
+		double proj = 0.0;
 
-		if(o1Min > proj) o1Min = proj;
-		if(o1Max < proj) o1Max = proj;
+		for(int o2VertexNum = 0; o2VertexNum < o2->shape->numVertices; ++o2VertexNum)
+		{
+			proj = o2->shape->normVec[normNum].DotProduct(
+				(o2->shape->vertices[o1VertexNum] - o1->shape->vertices[o2VertexNum]));
 
-		proj = o2->shape->normVec[normNum].DotProduct(o2Edges[normNum]);
+			if(proj > 0) break;
+			if(o2Min > proj)
+			{
+				o2Min = proj;
+				o2MinVer = o2->shape->normVec[normNum];
+			}
+		}
 
-		if(o2Min > proj) o2Min = proj;
-		if(o2Max < proj) o2Max = proj;
+		++normNum;
 	}
 
-	if(o1Min > o2Max || o1Max < o2Min) return false;
-	else return true;
+	if(o1Min == Utill::INF && o2Min == Utill::INF) return false;
+	else
+	{
+		collisionInfo.SetCollisionInfo(o1Min, o2Min, o1MinVer, o2MinVer);
+		return true;
+	}
 }
 
-
-void PhysicsEngine::ResolutionCollision(RenderableObject* o1,  RenderableObject* o2)
+void PhysicsEngine::ResolutionCollision(RenderableObject* o1,  RenderableObject* o2, CollisionInfo& collisionInfo)
 {
-	
+	const float restitution = 1.0f;
+
+	const vector3f relativeVelocity = o1->vel - o2->vel;
+
+	const float o1NormDirScalar = relativeVelocity.DotProduct(collisionInfo.o2Norm);
+	const float o2NormDirScalar = relativeVelocity.DotProduct(collisionInfo.o1Norm);
+
+	const float o1ImpulseScalar = (-(1 + restitution) * o1NormDirScalar / o1->inverseMass + o2->inverseMass);
+	const float o2ImpulseScalar = (-(1 + restitution) * o2NormDirScalar / o1->inverseMass + o2->inverseMass);
+
+	//vector3f o1Impulse = collisionInfo.o2Norm * (o1ImpulseScalar * o1->inverseMass);
+	//vector3f o2Impulse = collisionInfo.o1Norm * (o2ImpulseScalar * o2->inverseMass);
+
+	vector3f o1Impulse = collisionInfo.o2Norm * (o1ImpulseScalar * o1->inverseMass);
+	vector3f o2Impulse = collisionInfo.o1Norm * (o2ImpulseScalar * o2->inverseMass);
+
+	//o1->vel = o1->vel + o1Impulse;
+	//o2->vel = o2->vel - o2Impulse;
+
+	Integrator(o1, o1Impulse, 0.02f);
+	Integrator(o2, o2Impulse, 0.02f);
+
+	//RigidbodyUpdate();
 }
 
 void PhysicsEngine::Update(const float deltaTime)
 {
-	GenerateForce(deltaTime);
+	GenerateForce(C_gravitycoeff, deltaTime);
 	RigidbodyUpdate();
 	DetectCollision();
 }

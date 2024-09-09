@@ -10,9 +10,9 @@ Iterator QuadTree::end() const
     return Iterator();
 }
 
-std::unordered_set<IQTData*> QuadTree::Query(vector3f& min, vector3f& max) const
+std::vector<IQTData*> QuadTree::Query(vector3f& min, vector3f& max) const
 {
-    std::unordered_set<IQTData*> foundObj;
+    std::vector<IQTData*> foundObj;
 
     if (headptr)
     {
@@ -22,7 +22,7 @@ std::unordered_set<IQTData*> QuadTree::Query(vector3f& min, vector3f& max) const
     return foundObj;
 }
 
-void QuadTree::QueryRecusive(const QuadTNode& node, const vector3f& minCoordi, const vector3f& maxCoordi, std::unordered_set<IQTData*>& foundObjects) const
+void QuadTree::QueryRecusive(const QuadTNode& node, const vector3f& minCoordi, const vector3f& maxCoordi, std::vector<IQTData*>& foundObjects) const
 {
     if (node.GetNodeDepth() >= maxDepth || node.GetDataCount() <= 0) return;
 
@@ -43,7 +43,7 @@ void QuadTree::QueryRecusive(const QuadTNode& node, const vector3f& minCoordi, c
         {
             if (dataPos[j].x >= minCoordi.x && dataPos[j].x <= maxCoordi.x && dataPos[j].y >= minCoordi.y && dataPos[j].y <= maxCoordi.y)
             {
-                foundObjects.insert(data);
+                foundObjects.push_back(data);
                 break;
             }
         }

@@ -20,6 +20,19 @@ void RenderableObject::UpdateNormVectors()
     }
 }
 
+std::vector<vector3f> RenderableObject::GetEdge() const
+{
+    int numVertex = shape->numVertices;
+    std::vector<vector3f> edges;
+
+    for (int idx = 0; idx < numVertex; ++idx)
+    {
+        edges.push_back(shape->vertices[idx % numVertex] - shape->vertices[(idx + 1) % numVertex]);
+    }
+
+    return edges;
+}
+
 void RenderableObject::UpdateObjAABB()
 {
     objMinAABB = (pos + vector3f(-shape->distance, -shape->distance, 0));

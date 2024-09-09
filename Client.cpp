@@ -154,7 +154,6 @@ void SetPVMatrix()
     view = glm::mat4(1.0f);
     projection = glm::mat4(1.0f);
 
-    //view = glm::translate(view, glm::vec3(0.0f, 0.0f, -20000.0f));
     view = glm::lookAt(camPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 50000.0f);
 
@@ -244,23 +243,20 @@ int main()
     vector3f obj2InitPos(0, 0.5f, 0);
 
     Shape* shape2 = new Shape(3, 0.2f);
-    RenderableObject* obj2 = new RenderableObject(1.0f, shape2);
+    RenderableObject* obj2 = new RenderableObject(15.0f, shape2);
 
     obj2->name = "obbbbjjjj2";
 
     vector3f obj3InitPos(0, 0, 0);
 
     Shape* shape3 = new Shape(3, 0.1f);
-    RenderableObject* obj3 = new RenderableObject(1.0f, false, shape3);
+    RenderableObject* obj3 = new RenderableObject(2.2f, false, shape3);
 
     obj3->name = "gijun";
 
     SetPVMatrix();
     //////////////////////////////////////////////////////////////////////////////////////////////////
     Matrix4f model = Utill::GetModelMatrix(obj1InitPos, vector3f(Utill::WORLD_MAX, Utill::WORLD_MAX, 0), 0);
-    //Matrix4f model = Utill::GetModelMatrix(obj1InitPos, vector3f(1), 0);
-
-    //obj1->pos = model.Transform(obj1->pos);
 
     std::transform(obj1->shape->vertices,
         obj1->shape->vertices + 3,
@@ -272,12 +268,13 @@ int main()
 
     model = Utill::GetModelMatrix(obj2InitPos, vector3f(Utill::WORLD_MAX, Utill::WORLD_MAX, 0), 0);
 
-    //obj2->pos = model.Transform(obj2->pos);
-
     std::transform(obj2->shape->vertices,
         obj2->shape->vertices + 3,
         obj2->shape->vertices,
         [model](vector3f vertex) -> vector3f { return model.Transform(vertex); });
+
+    obj2->objMinAABB = model.Transform(obj2->objMinAABB);
+    obj2->objMaxAABB = model.Transform(obj2->objMaxAABB);
 
     model = Utill::GetModelMatrix(obj3InitPos, vector3f(Utill::WORLD_MAX, Utill::WORLD_MAX, 0), 0);
 
@@ -287,9 +284,6 @@ int main()
         obj3->shape->vertices + 3,
         obj3->shape->vertices,
         [model](vector3f vertex) -> vector3f { return model.Transform(vertex); });
-
-    obj2->objMinAABB = model.Transform(obj2->objMinAABB);
-    obj2->objMaxAABB = model.Transform(obj2->objMaxAABB);
 
     obj3->objMinAABB = model.Transform(obj3->objMinAABB);
     obj3->objMaxAABB = model.Transform(obj3->objMaxAABB);
