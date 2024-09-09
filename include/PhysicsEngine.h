@@ -4,9 +4,10 @@
 #include <iostream>
 #include <vector>
 #include <utility>
-#include <cmath>
+#include <algorithm>
 #include "RenderableObject.h"
 #include "QuadTree.h"
+#include "CollisionInfo.h"
 
 /*
 
@@ -25,15 +26,17 @@ private:
     
     QuadTree objects;
 
-    void GenerateForce(const float deltaTime);
+    void GenerateForce(vector3f Force, const float deltaTime);
+    void Integrator(RenderableObject* obj, vector3f Force, const float deltaTime);
+
     void RigidbodyUpdate();
     
     void DetectCollision();
     void BoardPhase();
     void NarrowPhase(std::vector<IQTData*>& collisionableSet);
-    bool IsOverlap(const RenderableObject* o1, const RenderableObject* o2, std::pair<vector3f, vector3f>& collisionInfo) const;
+    bool IsOverlap(const RenderableObject* o1, const RenderableObject* o2, CollisionInfo& collisionInfo) const;
 
-    void ResolutionCollision(RenderableObject* o1,  RenderableObject* o2);
+    void ResolutionCollision(RenderableObject* o1,  RenderableObject* o2, CollisionInfo& collisionInfo);
 
 public:
     //Constructor

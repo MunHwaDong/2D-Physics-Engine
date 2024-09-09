@@ -34,8 +34,8 @@ public:
 	bool CheckAABB(const QuadTNode& node, const vector3f& position) const;
 
 	//Query 관련 함수들
-	std::unordered_set<IQTData*> Query(vector3f& min, vector3f& max) const;
-	void QueryRecusive(const QuadTNode& node, const vector3f& min, const vector3f& max, std::unordered_set<IQTData*>& foundObj) const;
+	std::vector<IQTData*> Query(vector3f& min, vector3f& max) const;
+	void QueryRecusive(const QuadTNode& node, const vector3f& min, const vector3f& max, std::vector<IQTData*>& foundObj) const;
 
 	void Delete(IQTData* data);
 

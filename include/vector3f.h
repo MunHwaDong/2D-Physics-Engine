@@ -77,7 +77,7 @@ public:
 	//To extension for Matrix
 	float& operator[](const int idx)
 	{
-		if (idx >= 3) throw std::out_of_range("Bad Input");
+		if (idx >= 3 || idx < 0) std::out_of_range("Bad Input");
 
 		if (idx == 0)
 			return this->x;
@@ -85,6 +85,15 @@ public:
 			return this->y;
 		else
 			return this->z;
+	}
+
+	bool operator==(const vector3f& operand)
+	{
+		if(this->x == operand.x && this->y == operand.y && this->z == operand.z)
+		{
+			return true;
+		}
+		else return false;
 	}
 
 	//Output : Scalar

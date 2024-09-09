@@ -2,7 +2,7 @@
 #define MATRIX3F_H
 
 #include "vector3f.h"
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -36,7 +36,7 @@ public:
         Matrix3f result;
 
         std::transform(std::begin(mat3), std::end(mat3), std::begin(operand.mat3), std::begin(result.mat3),
-            [](const vector3f& lhs, const vector3f& rhs) { return lhs + rhs; });
+                        [](const vector3f& lhs, const vector3f& rhs) { return lhs + rhs; });
 
         return result;
     }
@@ -46,7 +46,7 @@ public:
         Matrix3f result;
 
         std::transform(std::begin(mat3), std::end(mat3), std::begin(operand.mat3), std::begin(result.mat3),
-            [](const vector3f& lhs, const vector3f& rhs) { return lhs - rhs; });
+                        [](const vector3f& lhs, const vector3f& rhs) { return lhs - rhs; });
 
         return result;
     }
@@ -58,7 +58,7 @@ public:
             this->mat3[0].DotProduct(operand),
             this->mat3[1].DotProduct(operand),
             this->mat3[2].DotProduct(operand)
-        );
+            );
     }
 
     //For Local to World Coordinate
@@ -69,6 +69,8 @@ public:
         float w = this->mat3[2][0] * operand.x + this->mat3[2][1] * operand.y + this->mat3[2][2];
 
         return vector3f(x / w, y / w, 0);
+        // operand.x = x / w;
+        // operand.y = y / w;
     }
 
     //Matrix Multiplication
@@ -95,9 +97,9 @@ public:
     //복사와 대입은 다르기에 복사 생성자와 다르게 구현함.
     Matrix3f& operator=(const Matrix3f operand)
     {
-        if (this != &operand)
+        if(this != &operand)
         {
-            for (int idx = 0; idx < 3; ++idx)
+            for(int idx = 0; idx < 3; ++idx)
             {
                 mat3[idx] = operand[idx];
             }
@@ -109,7 +111,7 @@ public:
     //Get Matrix entity
     const vector3f& operator[](const int row) const
     {
-        if (row >= 3) throw std::out_of_range("Bad Input");
+        if(row >= 3) throw std::out_of_range("Bad Input");
         else return mat3[row];
     }
 
