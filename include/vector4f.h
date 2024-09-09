@@ -91,6 +91,15 @@ public:
 			return this->w;
 	}
 
+	bool operator==(const vector4f& operand)
+	{
+		if (this->x == operand.x && this->y == operand.y && this->z == operand.z && this->w == operand.w)
+		{
+			return true;
+		}
+		else return false;
+	}
+
 	//Output : Scalar
 	const float DotProduct(const vector4f& operand) const
 	{
