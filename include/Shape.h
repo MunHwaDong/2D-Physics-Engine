@@ -19,6 +19,18 @@ public:
 	Shape() : numVertices(0), distance(0), vertices(0), normVec(0)
 	{};
 
+	Shape(Shape* shape)
+	{
+		numVertices = shape->numVertices;
+		distance = shape->distance;
+
+		vertices = new vector3f[numVertices];
+		normVec = new vector3f[numVertices];
+
+		std::copy(shape->vertices, shape->vertices + shape->numVertices, this->vertices);
+		std::copy(shape->normVec, shape->normVec + shape->numVertices, this->normVec);
+	};
+
 	Shape(const int numVertices, const float distance) : numVertices(numVertices), distance(distance), vertices(0), normVec(0)
 	{
 		vertices = new vector3f[numVertices];

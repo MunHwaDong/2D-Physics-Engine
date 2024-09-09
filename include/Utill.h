@@ -22,7 +22,7 @@ public:
             return vector3f(operand1.y - operand2.y, -(operand1.x - operand2.x), operand1.z - operand2.z);
     }
 
-    static const vector3f normalize(const vector3f& operand)
+    static const vector3f Normalize(const vector3f& operand)
     {
         float len = operand.length();
 
@@ -52,7 +52,7 @@ public:
         float t = 1.0f - c;
 
         // Normalize the axis vector
-        vector3f normalizedAxis = normalize(axis);
+        vector3f normalizedAxis = Normalize(axis);
         float x = normalizedAxis.x;
         float y = normalizedAxis.y;
         float z = normalizedAxis.z;
@@ -106,7 +106,11 @@ public:
 
     static const Matrix4f GetModelMatrix(const vector3f& transVec, const vector3f& scaleVec, float theta = 0)
     {
-        //return Utill::GetScaleMatrix4f(scaleVec) * Utill::GetRotateMatrix4f(theta, vector3f(0.0f, 0.0f, 1.0f)) * Utill::GetTranslateMatrix4f(transVec);
+        return Utill::GetScaleMatrix4f(scaleVec) * Utill::GetRotateMatrix4f(theta, vector3f(0.0f, 0.0f, 1.0f)) * Utill::GetTranslateMatrix4f(transVec);
+    }
+
+    static const Matrix4f GetModelMatrixTF(const vector3f& transVec, const vector3f& scaleVec, float theta = 0)
+    {
         return Utill::GetTranslateMatrix4f(transVec) * Utill::GetRotateMatrix4f(theta, vector3f(0.0f, 0.0f, 1.0f)) * Utill::GetScaleMatrix4f(scaleVec);
     }
 };

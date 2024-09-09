@@ -34,6 +34,13 @@ public:
     RenderableObject() : pos(), vel(), accel(), theta(), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(0), isUseGravity(true), shape()
     {};
 
+    //copy constructor
+    RenderableObject(RenderableObject* obj) : pos(obj->pos), vel(obj->vel), accel(obj->accel), theta(obj->theta), angularVel(obj->angularVel),
+        angularAccel(obj->angularAccel), objMinAABB(obj->objMinAABB), objMaxAABB(obj->objMaxAABB), inverseMass(obj->inverseMass), isUseGravity(obj->isUseGravity), shape(), name(obj->name)
+    {
+        shape = new Shape(obj->shape);
+    };
+
     RenderableObject(vector3f& pos) : pos(pos), vel(), accel(), theta(), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(0), isUseGravity(true), shape()
     {};
 

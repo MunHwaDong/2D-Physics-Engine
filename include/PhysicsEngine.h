@@ -35,7 +35,7 @@ private:
 
 public:
     //Constructor
-    PhysicsEngine() : C_gravitycoeff(0.0f, -9.8f, 0.0f), objects()
+    PhysicsEngine() : C_gravitycoeff(0.0f, -1.8f, 0.0f), objects()
     {};
 
     //Deconstructor

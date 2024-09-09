@@ -15,19 +15,19 @@ private:
     {
         if (!node) return;
 
-        if (node->GetAreaPtr(AREA::SE)->GetDataCount() != 0)
+        if (node->GetAreaPtr(AREA::SE))
         {
             Traversal(node->GetAreaPtr(AREA::SE));
         }
-        if (node->GetAreaPtr(AREA::SW)->GetDataCount() != 0)
+        if (node->GetAreaPtr(AREA::SW))
         {
             Traversal(node->GetAreaPtr(AREA::SW));
         }
-        if (node->GetAreaPtr(AREA::NE)->GetDataCount() != 0)
+        if (node->GetAreaPtr(AREA::NE))
         {
             Traversal(node->GetAreaPtr(AREA::NE));
         }
-        if (node->GetAreaPtr(AREA::NW)->GetDataCount() != 0)
+        if (node->GetAreaPtr(AREA::NW))
         {
             Traversal(node->GetAreaPtr(AREA::NW));
         }
