@@ -6,6 +6,14 @@ void PhysicsEngine::GenerateForce(const float deltaTime)
 	{
 		RenderableObject* obj = dynamic_cast<RenderableObject*>(*iter);
 
+		//std::cout << obj->name << std::endl;
+		//for (int i = 0; i < 3; ++i)
+		//{
+		//	std::cout << obj->shape->vertices[i].x << ", " << obj->shape->vertices[i].y << std::endl;
+		//}
+		 
+		//std::cout << obj->name << " : " << obj->pos.x << " " << obj->pos.y << std::endl;
+
 		if (!obj->isUseGravity) continue;
 
 		obj->vel += (C_gravitycoeff * obj->inverseMass) * deltaTime;
@@ -19,15 +27,15 @@ void PhysicsEngine::GenerateForce(const float deltaTime)
 		//std::cout << beforevel.x - obj->vel.x << " " << beforevel.y - obj->vel.y << std::endl;
 		//beforevel = obj->vel;
 
-		std::cout << obj->name << std::endl;
-		for (int i = 0; i < 3; ++i)
-		{
-			std::cout << obj->shape->vertices[i].x << ", " << obj->shape->vertices[i].y << std::endl;
-		}
+		//std::cout << obj->name << std::endl;
+		//for (int i = 0; i < 3; ++i)
+		//{
+		//	std::cout << obj->shape->vertices[i].x << ", " << obj->shape->vertices[i].y << std::endl;
+		//}
 
-		//std::cout << "obj 법선 : " << obj->shape->normVec[0].x << " " << obj->shape->normVec[0].y << std::endl;
-		//std::cout << "obj 법선 : " << obj->shape->normVec[1].x << " " << obj->shape->normVec[1].y << std::endl;
-		//std::cout << "obj 법선 : " << obj->shape->normVec[2].x << " " << obj->shape->normVec[2].y << std::endl;
+		//std::cout << obj->name << " 법선 : " << obj->shape->normVec[0].x << " " << obj->shape->normVec[0].y << std::endl;
+		//std::cout << obj->name << " 법선 : " << obj->shape->normVec[1].x << " " << obj->shape->normVec[1].y << std::endl;
+		//std::cout << obj->name << " 법선 : " << obj->shape->normVec[2].x << " " << obj->shape->normVec[2].y << std::endl;
 	}
 }
 
@@ -40,26 +48,28 @@ void PhysicsEngine::RigidbodyUpdate()
 	{
 		RenderableObject* obj(dynamic_cast<RenderableObject*>(*iter));
 
-		//model = Utill::GetScaleMatrix4f(vector3f(0.0001f, 0.0001f, 0)) * Utill::GetRotateMatrix4f(0.02f, vector3f(0, 0, 1.0f)) * Utill::GetTranslateMatrix4f(vector3f(0));
-		model = Utill::GetModelMatrix(vector3f(0), vector3f(0.0001f, 0.0001f, 0), 0.02f);
+		model = Utill::GetModelMatrix(vector3f(0), vector3f(Utill::WORLD_MAX, Utill::WORLD_MAX, 0), 0);
+
+		vector3f t = model.Transform(obj->pos);
+
+		model = Utill::GetModelMatrix(t, vector3f(1), 0.02f);
 
 		std::transform(obj->shape->vertices,
 					   obj->shape->vertices + 3,
 					   obj->shape->vertices,
 					   [model](vector3f vertex) -> vector3f { return model.Transform(vertex); });
 
-		model = Utill::GetModelMatrix(obj->pos, vector3f(Utill::WORLD_MAX, Utill::WORLD_MAX, 0), 0);
-		//model = Utill::GetScaleMatrix4f(vector3f(Utill::WORLD_MAX, Utill::WORLD_MAX, 0)) * Utill::GetRotateMatrix4f(0, vector3f(0, 0, 1.0f)) * Utill::GetTranslateMatrix4f(vector3f(0));
+		obj->UpdateNormVectors();
+		model = Utill::GetModelMatrix(t, vector3f(1), 0);
 
-		std::transform(obj->shape->vertices,
-					obj->shape->vertices + 3,
-					obj->shape->vertices,
-					[model](vector3f vertex) -> vector3f { return model.Transform(vertex); });
+		obj->objMinAABB = model.Transform(obj->objMinAABB);
+		obj->objMaxAABB = model.Transform(obj->objMaxAABB);
 
 		if (objects.CheckAABB(*iter.GetNode(), obj->objMinAABB) &&
 			objects.CheckAABB(*iter.GetNode(), obj->objMaxAABB))
 		{
-			events.push_back({ *iter, obj });
+			//obj = new RenderableObject(obj);
+			//events.push_back({ *iter, obj });
 		}
 	}
 

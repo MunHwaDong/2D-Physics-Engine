@@ -16,7 +16,7 @@ void RenderableObject::UpdateNormVectors()
 
     for (int idx = 0; idx < numVertex; ++idx)
     {
-        shape->normVec[idx] = Utill::GetNormVector(shape->vertices[idx % numVertex], shape->vertices[(idx + 1) % numVertex]);
+        shape->normVec[idx] = Utill::Normalize(Utill::GetNormVector(shape->vertices[idx % numVertex], shape->vertices[(idx + 1) % numVertex]));
     }
 }
 

@@ -143,10 +143,11 @@ void QuadTree::Delete(IQTData* data)
 
 void QuadTree::DeleteRecursive(QuadTNode& node, IQTData* data)
 {
+    int counter = 0;
+
     if (node.GetNodeDepth() < this->maxDepth)
     {
         const vector3f* datasPos = data->GetPosition();
-        int counter = 0;
 
         for (int area = 0; area < 4; ++area)
         {
@@ -169,9 +170,8 @@ void QuadTree::DeleteRecursive(QuadTNode& node, IQTData* data)
         }
     }
 
-    //Root에 존재한다 판단
-    node.DeleteData(data);
-    return;
+    if (counter != data->GetDataCount()) node.DeleteData(data);
+    else return;
 }
 
 QuadTree::~QuadTree()

@@ -20,6 +20,8 @@ glm::mat4 projection;
 glm::mat4 view;
 glm::mat4 PV;
 
+glm::vec3 camPos(0.0f, 0.0f, 25000.0f);
+
 Matrix4f model;
 
 void FrameBufferResize(GLFWwindow* window, int width, int height)
@@ -152,7 +154,8 @@ void SetPVMatrix()
     view = glm::mat4(1.0f);
     projection = glm::mat4(1.0f);
 
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -20000.0f));
+    //view = glm::translate(view, glm::vec3(0.0f, 0.0f, -20000.0f));
+    view = glm::lookAt(camPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 50000.0f);
 
     PV = projection * view;
@@ -167,6 +170,18 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
         case GLFW_KEY_ESCAPE:
             std::cout << "Escape key pressed" << std::endl;
             glfwSetWindowShouldClose(window, true);
+            break;
+        case GLFW_KEY_UP:
+            camPos += glm::vec3(0.0f, 1000.0f, 0.0f);
+            break;
+        case GLFW_KEY_RIGHT:
+            camPos += glm::vec3(1000.0f, 0.0f, 0.0f);
+            break;
+        case GLFW_KEY_DOWN:
+            camPos += glm::vec3(0.0f, -1000.0f, 0.0f);
+            break;
+        case GLFW_KEY_LEFT:
+            camPos += glm::vec3(-1000.0f, 0.0f, 0.0f);
             break;
         case GLFW_KEY_W:
             std::cout << "삼각형 생성" << std::endl;
@@ -214,6 +229,7 @@ int main()
 
     unsigned int shaderProgram = 0;
     InitShader(shaderProgram);
+    SetPVMatrix();
 
     PhysicsEngine phyEngine;
     //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -222,9 +238,9 @@ int main()
 
     Shape* shape1 = new Shape(3, 0.2f);
     RenderableObject* obj1 = new RenderableObject(5.0f, shape1);
-        
+
     obj1->name = "obj1";
-   
+
     vector3f obj2InitPos(0, 0.5f, 0);
 
     Shape* shape2 = new Shape(3, 0.2f);
@@ -242,29 +258,30 @@ int main()
     SetPVMatrix();
     //////////////////////////////////////////////////////////////////////////////////////////////////
     Matrix4f model = Utill::GetModelMatrix(obj1InitPos, vector3f(Utill::WORLD_MAX, Utill::WORLD_MAX, 0), 0);
+    //Matrix4f model = Utill::GetModelMatrix(obj1InitPos, vector3f(1), 0);
 
-    obj1->pos = model.Transform(obj1->pos);
+    //obj1->pos = model.Transform(obj1->pos);
 
     std::transform(obj1->shape->vertices,
-                   obj1->shape->vertices + 3,
-                   obj1->shape->vertices,
-                   [model](vector3f vertex) -> vector3f { return model.Transform(vertex); });
+        obj1->shape->vertices + 3,
+        obj1->shape->vertices,
+        [model](vector3f vertex) -> vector3f { return model.Transform(vertex); });
 
     obj1->objMinAABB = model.Transform(obj1->objMinAABB);
     obj1->objMaxAABB = model.Transform(obj1->objMaxAABB);
 
     model = Utill::GetModelMatrix(obj2InitPos, vector3f(Utill::WORLD_MAX, Utill::WORLD_MAX, 0), 0);
 
-    obj2->pos = model.Transform(obj2->pos);
+    //obj2->pos = model.Transform(obj2->pos);
 
     std::transform(obj2->shape->vertices,
-                   obj2->shape->vertices + 3,
-                   obj2->shape->vertices,
-                   [model](vector3f vertex) -> vector3f { return model.Transform(vertex); });
+        obj2->shape->vertices + 3,
+        obj2->shape->vertices,
+        [model](vector3f vertex) -> vector3f { return model.Transform(vertex); });
 
     model = Utill::GetModelMatrix(obj3InitPos, vector3f(Utill::WORLD_MAX, Utill::WORLD_MAX, 0), 0);
 
-    obj3->pos = model.Transform(obj3->pos);
+    //obj3->pos = model.Transform(obj3->pos);
 
     std::transform(obj3->shape->vertices,
         obj3->shape->vertices + 3,
@@ -273,6 +290,9 @@ int main()
 
     obj2->objMinAABB = model.Transform(obj2->objMinAABB);
     obj2->objMaxAABB = model.Transform(obj2->objMaxAABB);
+
+    obj3->objMinAABB = model.Transform(obj3->objMinAABB);
+    obj3->objMaxAABB = model.Transform(obj3->objMaxAABB);
 
     phyEngine.AddObject(obj1);
     phyEngine.AddObject(obj2);
@@ -336,6 +356,8 @@ int main()
         glfwSwapBuffers(window);
 
         glfwPollEvents();
+
+        SetPVMatrix();
     }
 
     glfwTerminate();
