@@ -6,11 +6,11 @@ void PhysicsEngine::GenerateForce(const float deltaTime)
 	{
 		RenderableObject* obj = dynamic_cast<RenderableObject*>(*iter);
 
-		//std::cout << obj->name << std::endl;
-		//for (int i = 0; i < 3; ++i)
-		//{
-		//	std::cout << obj->shape->vertices[i].x << ", " << obj->shape->vertices[i].y << std::endl;
-		//}
+		// std::cout << obj->name << std::endl;
+		// for (int i = 0; i < 3; ++i)
+		// {
+		// 	std::cout << obj->shape->vertices[i].x << ", " << obj->shape->vertices[i].y << std::endl;
+		// }
 		 
 		//std::cout << obj->name << " : " << obj->pos.x << " " << obj->pos.y << std::endl;
 
@@ -80,18 +80,18 @@ void PhysicsEngine::RigidbodyUpdate()
 	}
 }
 
-void PhysicsEngine::DetectCollision() const
+void PhysicsEngine::DetectCollision()
 {
 	BoardPhase();
 }
 
-void PhysicsEngine::BoardPhase() const
+void PhysicsEngine::BoardPhase()
 {
 	for (auto iter = objects.begin(); iter != objects.end(); ++iter)
 	{
 		RenderableObject* obj = dynamic_cast<RenderableObject*>(*iter);
 
-		std::unordered_set<IQTData*> collisionableSet = objects.Query(obj->objMinAABB, obj->objMaxAABB);
+		std::vector<IQTData*> collisionableSet = objects.Query(obj->objMinAABB, obj->objMaxAABB);
 
 		if (!collisionableSet.empty() && collisionableSet.size() > 1)
 		{
@@ -101,7 +101,9 @@ void PhysicsEngine::BoardPhase() const
 	}
 }
 
-void PhysicsEngine::NarrowPhase(std::unordered_set<IQTData*> collisionableSet) const
+
+
+void PhysicsEngine::NarrowPhase(std::vector<IQTData*>& collisionableSet)
 {
 	//Using SAT(Seperating Axis Theorem)
 	/*
@@ -112,41 +114,86 @@ void PhysicsEngine::NarrowPhase(std::unordered_set<IQTData*> collisionableSet) c
 				(A 도형의 Normal들과 B 도형의 Normal 모두에 대해서 검사해야한다.)
 
 
-		1. 두 두형의 처음 정점을 선택한다.
-		2. 두 정점을 빼서, 두 정점 사이를 표현하는(거리, 방향) 벡터를 구한다.
-			(선택한 Normal을 가진 도형 - 비교하려는 도형)
-		3. (2)에서 구한 벡터를, 선택한 Normal에 내적한다.
-		4. (3)에서 구한 값이, 최소값이면 저장한다.
+		1. 처음 다각형의 법선 정보를 가져온다.
+		2. 해당 법선에 두 도형의 모든 면을 투영한다.
+		3. 투영 시, 각 도형들의 면들에 대해 최대 값과 최소 값을 저장한다.
+		4. 두 도형의 범위가 겹친다면, (1)로 돌아간다.
+		5. 두 도형의 범위가 겹치지 않는다면, 두 도형은 충돌하지 않은 것이므로 다음 도형을 검사한다.
 	*/
+	
+	const int collisionableNum = collisionableSet.size();
 
-	//해당 지역에서 충돌 가능성이 있는 모든 도형들에 대해 검사를 실시해야함
-	//for (auto iter = collisionableSet.begin(); iter != collisionableSet.end(); ++iter)
-	//{
-	//	auto obj1 = *iter;
+	for(int objNum = 0; objNum < collisionableNum; ++objNum)
+	{
+		RenderableObject* obj1 = dynamic_cast<RenderableObject*>(collisionableSet[objNum]);
 
-	//	const vector3f* o1V = obj1->GetPosition();
-	//	const vector3f* o1N = dynamic_cast<RenderableObject*>(obj1)->shape->normVec;
+		for(int targetObj = objNum + 1; targetObj < collisionableNum; ++targetObj)
+		{
+			RenderableObject* obj2 = dynamic_cast<RenderableObject*>(collisionableSet[targetObj]);
+			std::pair<vector3f, vector3f> collisionInfo;
 
-	//	auto next = std::next(iter);
-	//	while (next != collisionableSet.end())
-	//	{
-	//		auto obj2 = *next;
-
-	//		const vector3f* o2V = obj2->GetPosition();
-
-	//		for()
-
-
-	//		++next;
-	//	}
-	//}
+			if(IsOverlap(obj1, obj2, collisionInfo))
+			{
+				std::cout << obj1->name << " / " << obj2->name << " is Collision!" << std::endl;
+				ResolutionCollision(obj1, obj2);
+			}
+		}
+	}
 
 }
 
-
-void PhysicsEngine::ResolutionCollision()
+bool PhysicsEngine::IsOverlap(const RenderableObject* o1, const RenderableObject* o2, std::pair<vector3f, vector3f>& collisionInfo) const
 {
+	const auto o1Edges = o1->GetEdge();
+	const auto o2Edges = o2->GetEdge();
 
+	double o1Min = Utill::INF;
+	double o1Max = (-1) * Utill::INF;
+	double o2Min = Utill::INF;
+	double o2Max = (-1) * Utill::INF;
+
+	for(int normNum = 0; normNum < o1->shape->numVertices; ++normNum)
+	{
+		float proj = o1->shape->normVec[normNum].DotProduct(o1Edges[normNum]);
+
+		if(o1Min > proj) o1Min = proj;
+		if(o1Max < proj) o1Max = proj;
+
+		proj = o1->shape->normVec[normNum].DotProduct(o2Edges[normNum]);
+
+		if(o2Min > proj) o2Min = proj;
+		if(o2Max < proj) o2Max = proj;
+	}
+
+	if(o1Min > o2Max || o1Max < o2Min) return false;
+
+	//obj2의 법선 벡터들에도 투영해서 검사해야한다.
+	o1Min = Utill::INF;
+	o1Max = (-1) * Utill::INF;
+	o2Min = Utill::INF;
+	o2Max = (-1) * Utill::INF;
+
+	for(int normNum = 0; normNum < o2->shape->numVertices; ++normNum)
+	{
+		float proj = o2->shape->normVec[normNum].DotProduct(o1Edges[normNum]);
+
+		if(o1Min > proj) o1Min = proj;
+		if(o1Max < proj) o1Max = proj;
+
+		proj = o2->shape->normVec[normNum].DotProduct(o2Edges[normNum]);
+
+		if(o2Min > proj) o2Min = proj;
+		if(o2Max < proj) o2Max = proj;
+	}
+
+	if(o1Min > o2Max || o1Max < o2Min) return false;
+	else return true;
+}
+
+
+void PhysicsEngine::ResolutionCollision(RenderableObject* o1,  RenderableObject* o2)
+{
+	
 }
 
 void PhysicsEngine::Update(const float deltaTime)
