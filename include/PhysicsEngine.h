@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <utility>
+#include <cmath>
 #include "RenderableObject.h"
 #include "QuadTree.h"
 
@@ -27,11 +28,12 @@ private:
     void GenerateForce(const float deltaTime);
     void RigidbodyUpdate();
     
-    void DetectCollision() const;
-    void BoardPhase() const;
-    void NarrowPhase(std::unordered_set<IQTData*> collisionableSet) const;
+    void DetectCollision();
+    void BoardPhase();
+    void NarrowPhase(std::vector<IQTData*>& collisionableSet);
+    bool IsOverlap(const RenderableObject* o1, const RenderableObject* o2, std::pair<vector3f, vector3f>& collisionInfo) const;
 
-    void ResolutionCollision();
+    void ResolutionCollision(RenderableObject* o1,  RenderableObject* o2);
 
 public:
     //Constructor

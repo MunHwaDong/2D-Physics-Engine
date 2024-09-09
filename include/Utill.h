@@ -12,7 +12,8 @@ private:
 
 public:
     enum { WORLD_MIN = -10000,
-           WORLD_MAX = 10000};
+           WORLD_MAX = 10000,
+           INF = 100000000000};
 
     static const vector3f GetNormVector(const vector3f& operand1, const vector3f& operand2, bool isCCW = true)
     {

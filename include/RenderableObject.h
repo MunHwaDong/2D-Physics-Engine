@@ -2,6 +2,7 @@
 #define RENDERABLE_OBJECT_H
 
 #include "Shape.h"
+#include <string>
 
 class RenderableObject : public IQTData
 {
@@ -45,7 +46,7 @@ public:
     {};
 
     RenderableObject(vector3f& pos, float mass)
-        : pos(pos), vel(), accel(), theta(theta), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(1 / mass), isUseGravity(true), shape()
+        : pos(pos), vel(), accel(), theta(), angularVel(), angularAccel(), objMinAABB(), objMaxAABB(), inverseMass(1 / mass), isUseGravity(true), shape()
     {};
 
     RenderableObject(vector3f& pos, vector3f& theta, float mass)
@@ -101,6 +102,7 @@ public:
     void UpdateVertices();
     void UpdateNormVectors();
     void UpdateObjAABB();
+    std::vector<vector3f> GetEdge() const;
 
     virtual const vector3f* const GetPosition() const override
     {
