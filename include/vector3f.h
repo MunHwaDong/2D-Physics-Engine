@@ -54,9 +54,26 @@ public:
 
 	vector3f& operator+=(const vector3f& operand)
 	{
-		this->x += operand.x;
-		this->y += operand.y;
-		this->z += operand.z;
+		//자기 대입 방지
+		if (this != &operand)
+		{
+			this->x += operand.x;
+			this->y += operand.y;
+			this->z += operand.z;
+		}
+
+		return *this;
+	}
+
+	vector3f& operator-=(const vector3f& operand)
+	{
+		//자기 대입 방지
+		if (this != &operand)
+		{
+			this->x -= operand.x;
+			this->y -= operand.y;
+			this->z -= operand.z;
+		}
 
 		return *this;
 	}
@@ -89,7 +106,7 @@ public:
 
 	bool operator==(const vector3f& operand)
 	{
-		if(this->x == operand.x && this->y == operand.y && this->z == operand.z)
+		if (this->x == operand.x && this->y == operand.y && this->z == operand.z)
 		{
 			return true;
 		}

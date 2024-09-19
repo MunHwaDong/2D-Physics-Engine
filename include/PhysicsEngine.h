@@ -23,24 +23,24 @@ class PhysicsEngine
 {
 private:
     const vector3f C_gravitycoeff;
-    
+
     QuadTree objects;
 
     void GenerateForce(vector3f Force, const float deltaTime);
     void Integrator(RenderableObject* obj, vector3f Force, const float deltaTime);
 
     void RigidbodyUpdate();
-    
+
     void DetectCollision();
     void BoardPhase();
     void NarrowPhase(std::vector<IQTData*>& collisionableSet);
     bool IsOverlap(const RenderableObject* o1, const RenderableObject* o2, CollisionInfo& collisionInfo) const;
 
-    void ResolutionCollision(RenderableObject* o1,  RenderableObject* o2, CollisionInfo& collisionInfo);
+    void ResolutionCollision(RenderableObject* o1, RenderableObject* o2, CollisionInfo& collisionInfo);
 
 public:
     //Constructor
-    PhysicsEngine() : C_gravitycoeff(0.0f, -1.8f, 0.0f), objects()
+    PhysicsEngine() : C_gravitycoeff(0.0f, -9.8f, 0.0f), objects()
     {};
 
     //Deconstructor
