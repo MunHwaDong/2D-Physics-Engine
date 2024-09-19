@@ -16,21 +16,15 @@ void RenderableObject::UpdateNormVectors()
 
     for (int idx = 0; idx < numVertex; ++idx)
     {
-        shape->normVec[idx] = Utill::Normalize(Utill::GetNormVector(shape->vertices[idx % numVertex], shape->vertices[(idx + 1) % numVertex]));
+        shape->normVec[idx] = Utill::Normalize(Utill::GetNormVector(shape->vertices[idx % numVertex], shape->vertices[(idx + 1) % numVertex], false));
     }
 }
 
-std::vector<vector3f> RenderableObject::GetEdge() const
+const vector3f RenderableObject::GetEdge(const int idx) const
 {
     int numVertex = shape->numVertices;
-    std::vector<vector3f> edges;
 
-    for (int idx = 0; idx < numVertex; ++idx)
-    {
-        edges.push_back(shape->vertices[idx % numVertex] - shape->vertices[(idx + 1) % numVertex]);
-    }
-
-    return edges;
+    return vector3f(shape->vertices[idx % numVertex] - shape->vertices[(idx + 1) % numVertex]);
 }
 
 void RenderableObject::UpdateObjAABB()

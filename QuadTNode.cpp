@@ -1,4 +1,4 @@
-#include "include/QuadTNode.h"
+#include "QuadTNode.h"
 
 QuadTNode::~QuadTNode()
 {

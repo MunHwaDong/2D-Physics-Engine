@@ -243,14 +243,15 @@ int main()
     vector3f obj2InitPos(0, 0.5f, 0);
 
     Shape* shape2 = new Shape(3, 0.2f);
-    RenderableObject* obj2 = new RenderableObject(15.0f, shape2);
+    RenderableObject* obj2 = new RenderableObject(7.0f, shape2);
 
     obj2->name = "obbbbjjjj2";
 
     vector3f obj3InitPos(0, 0, 0);
 
     Shape* shape3 = new Shape(3, 0.1f);
-    RenderableObject* obj3 = new RenderableObject(2.2f, false, shape3);
+    RenderableObject* obj3 = new RenderableObject(8.0f, false, shape3);
+    //RenderableObject* obj3 = new RenderableObject(150.0f, shape3);
 
     obj3->name = "gijun";
 
@@ -277,8 +278,6 @@ int main()
     obj2->objMaxAABB = model.Transform(obj2->objMaxAABB);
 
     model = Utill::GetModelMatrix(obj3InitPos, vector3f(Utill::WORLD_MAX, Utill::WORLD_MAX, 0), 0);
-
-    //obj3->pos = model.Transform(obj3->pos);
 
     std::transform(obj3->shape->vertices,
         obj3->shape->vertices + 3,
